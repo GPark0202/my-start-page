@@ -141,6 +141,20 @@
   .block-handle{position:absolute;left:0;right:0;height:6px;cursor:ns-resize;background:transparent;z-index:3;}
   .block-handle.top{top:-3px;}
   .block-handle.bot{bottom:-3px;}
+
+  /* Docs entry buttons */
+  .docs-bar{display:flex;gap:16px;justify-content:center;width:100%;max-width:1100px;padding:0 16px;margin-bottom:32px;}
+  .docs-btn{flex:1;max-width:320px;padding:16px 20px;background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:var(--radius);color:var(--text-primary);font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s;}
+  .docs-btn:hover{background:var(--bg-tertiary);border-color:var(--accent);color:var(--accent);}
+
+  /* Docs picker / list */
+  .modal.docs-picker{width:560px;}
+  .modal.docs-list{width:640px;}
+  .docs-card{padding:14px 16px;background:var(--bg-primary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);cursor:pointer;margin-bottom:8px;transition:all .15s;}
+  .docs-card:hover{background:var(--bg-tertiary);border-color:var(--accent);}
+  .docs-card-label{font-size:14px;color:var(--text-primary);font-weight:500;margin-bottom:2px;}
+  .docs-card-meta{font-size:11px;color:var(--text-muted);}
+  .docs-empty{color:var(--text-muted);text-align:center;padding:24px;font-size:13px;}
 </style>
 </head>
 <body ondragend="onGlobalDragEnd()">
@@ -156,6 +170,11 @@
 </div>
 
 <div class="shortcuts-grid" id="shortcutsGrid"></div>
+
+<div class="docs-bar">
+  <button class="docs-btn" onclick="docsOpenNew()">새 글…</button>
+  <button class="docs-btn" onclick="docsOpenList()">나의 프로젝트 문서</button>
+</div>
 
 <div class="planner">
   <div class="planner-left">
@@ -250,6 +269,28 @@
   </div>
 </div>
 
+<!-- Docs: template picker -->
+<div class="modal-overlay" id="docsPickerModal" onclick="if(event.target===this)docsClosePicker()">
+  <div class="modal docs-picker">
+    <h3>새 글 — 템플릿 선택</h3>
+    <div id="docsPickerList"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="docsClosePicker()">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- Docs: project list -->
+<div class="modal-overlay" id="docsListModal" onclick="if(event.target===this)docsCloseList()">
+  <div class="modal docs-list">
+    <h3>나의 프로젝트 문서</h3>
+    <div id="docsListContent" class="docs-empty">(문서 목록은 다음 커밋에서 구현됩니다)</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="docsCloseList()">닫기</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://accounts.google.com/gsi/client" onload="onGsiLoad()" async defer></script>
 <script>
 // ── Config ──
@@ -260,7 +301,7 @@ const SLOT_MIN=30, SLOT_PX=30, HOUR_START=6, HOUR_END=24;
 const SLOT_COUNT=(HOUR_END-HOUR_START)*60/SLOT_MIN;   // 36
 
 // ── State ──
-let shortcuts=[], bookmarks=[];
+let shortcuts=[], bookmarks=[], templates=[];
 let dailyJob={items:[],lastResetDate:''};
 let brainDump=[];
 let timeplanByDate={};   // { 'YYYY-MM-DD': [blocks] }
@@ -461,6 +502,7 @@ function calIcon(){
 // ── Static loaders ──
 async function fetchShortcuts(){try{const r=await fetch('./data/shortcuts.json',{cache:'no-cache'});shortcuts=await r.json();}catch(e){console.error('shortcuts.json',e);shortcuts=[];}}
 async function fetchBookmarks(){try{const r=await fetch('./data/bookmarks.json',{cache:'no-cache'});bookmarks=await r.json();}catch(e){console.error('bookmarks.json',e);bookmarks=[];}}
+async function fetchTemplates(){try{const r=await fetch('./data/templates.json',{cache:'no-cache'});templates=await r.json();}catch(e){console.error('templates.json',e);templates=[];}}
 
 function renderBookmarks(){
   document.getElementById('bookmarkBar').innerHTML=bookmarks.map(b=>`<a class="bm-pill" href="${b.url}"><span class="bm-emoji">${b.emoji||''}</span>${escapeHtml(b.name)}</a>`).join('');
@@ -770,6 +812,30 @@ function blockDelete(){
   saveTimeplan(currentDate);renderTimePlan();blockClose();
 }
 
+// ── Docs (templates + project documents) ──
+function docsOpenNew(){
+  if(!templates.length){alert('템플릿을 불러오는 중입니다. 잠시 후 다시 시도하세요.');return;}
+  docsRenderPicker();
+  document.getElementById('docsPickerModal').classList.add('active');
+}
+function docsClosePicker(){document.getElementById('docsPickerModal').classList.remove('active');}
+function docsRenderPicker(){
+  document.getElementById('docsPickerList').innerHTML=templates.map(t=>
+    `<div class="docs-card" onclick="docsPick('${escapeHtml(t.id)}')">`
+    +`<div class="docs-card-label">${escapeHtml(t.label)}</div>`
+    +`<div class="docs-card-meta">${t.sections?t.sections.length:0}개 섹션</div>`
+    +`</div>`
+  ).join('');
+}
+function docsPick(id){
+  const t=templates.find(x=>x.id===id);
+  console.log('docsPick',id,t);
+  docsClosePicker();
+  // TODO(next commit): open editor with template `t`
+}
+function docsOpenList(){document.getElementById('docsListModal').classList.add('active');}
+function docsCloseList(){document.getElementById('docsListModal').classList.remove('active');}
+
 // ── Master render ──
 function renderAll(){renderAuth();renderBookmarks();renderShortcuts();renderDailyJob();renderBrainDump();renderTimePlan();}
 
@@ -780,7 +846,7 @@ function renderAll(){renderAuth();renderBookmarks();renderShortcuts();renderDail
   const cBD=cacheGet('brainDump');if(cBD)brainDump=cBD;
   const cTP=cacheGet('tp:'+currentDate);if(cTP)timeplanByDate[currentDate]=cTP;
   checkDailyJobReset();
-  await Promise.all([fetchShortcuts(),fetchBookmarks()]);
+  await Promise.all([fetchShortcuts(),fetchBookmarks(),fetchTemplates()]);
   renderAll();
 })();
 

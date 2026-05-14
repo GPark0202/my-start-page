@@ -155,6 +155,40 @@
   .docs-card-label{font-size:14px;color:var(--text-primary);font-weight:500;margin-bottom:2px;}
   .docs-card-meta{font-size:11px;color:var(--text-muted);}
   .docs-empty{color:var(--text-muted);text-align:center;padding:24px;font-size:13px;}
+
+  /* Docs editor (full-screen-ish overlay) */
+  .docs-editor-overlay{background:rgba(0,0,0,0.85);}
+  .docs-editor{background:var(--bg-primary);width:min(900px,96vw);max-height:92vh;display:flex;flex-direction:column;border-radius:var(--radius);box-shadow:0 8px 32px var(--shadow);overflow:hidden;}
+  .docs-editor-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--bg-tertiary);background:var(--bg-secondary);flex-shrink:0;}
+  .docs-editor-title{flex:1;height:36px;background:var(--bg-primary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);padding:0 12px;color:var(--text-primary);font-size:15px;font-weight:600;font-family:inherit;outline:none;}
+  .docs-editor-title:focus{border-color:var(--accent);}
+  .docs-editor-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+  .docs-editor-actions .btn-save{padding:8px 18px;border:none;border-radius:var(--radius-sm);font-size:13px;font-family:inherit;cursor:pointer;background:var(--accent);color:#202124;font-weight:600;transition:background .15s;}
+  .docs-editor-actions .btn-save:hover{background:var(--accent-hover);}
+  .docs-editor-close{width:32px;height:32px;background:var(--bg-tertiary);border:none;border-radius:50%;color:var(--text-secondary);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;}
+  .docs-editor-close:hover{background:var(--danger-dim);color:var(--danger);}
+  .docs-editor-meta{padding:6px 20px;font-size:11px;color:var(--text-muted);background:var(--bg-secondary);border-bottom:1px solid var(--bg-tertiary);flex-shrink:0;}
+  .docs-editor-meta:empty{display:none;}
+  .docs-editor-body{padding:18px 22px;overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--bg-tertiary) transparent;}
+  .docs-editor-body::-webkit-scrollbar{width:6px;}
+  .docs-editor-body::-webkit-scrollbar-thumb{background:var(--bg-tertiary);border-radius:4px;}
+  .docs-section{margin-bottom:18px;}
+  .docs-section-q{display:block;font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;}
+  .docs-section-a{width:100%;min-height:90px;background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);padding:10px 12px;color:var(--text-primary);font-size:13px;line-height:1.55;font-family:inherit;outline:none;resize:vertical;}
+  .docs-section-a:focus{border-color:var(--accent);}
+  .docs-section-a.has-hint{color:var(--text-muted);font-style:italic;}
+
+  /* Docs list rows */
+  .docs-list-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg-primary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;transition:all .15s;}
+  .docs-list-row:hover{background:var(--bg-tertiary);border-color:var(--accent);}
+  .docs-list-info{flex:1;min-width:0;}
+  .docs-list-title{font-size:14px;color:var(--text-primary);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .docs-list-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
+  .docs-list-actions{display:flex;gap:4px;flex-shrink:0;}
+  .docs-list-actions button{padding:4px 10px;background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);color:var(--text-secondary);font-size:11px;font-family:inherit;cursor:pointer;transition:all .15s;}
+  .docs-list-actions button:hover{background:var(--bg-hover);color:var(--text-primary);}
+  .docs-list-actions .docs-list-del:hover{background:var(--danger-dim);color:var(--danger);border-color:var(--danger);}
+  .docs-list-loading{color:var(--text-muted);text-align:center;padding:24px;font-size:13px;}
 </style>
 </head>
 <body ondragend="onGlobalDragEnd()">
@@ -280,11 +314,26 @@
   </div>
 </div>
 
+<!-- Docs: editor -->
+<div class="modal-overlay docs-editor-overlay" id="docsEditorModal" onclick="if(event.target===this)docsEditorClose()">
+  <div class="docs-editor">
+    <div class="docs-editor-head">
+      <input type="text" id="docsEditorTitle" class="docs-editor-title" placeholder="제목을 입력하세요..." autocomplete="off">
+      <div class="docs-editor-actions">
+        <button class="btn-save" onclick="docsEditorSave()">저장</button>
+        <button class="docs-editor-close" onclick="docsEditorClose()" title="닫기">×</button>
+      </div>
+    </div>
+    <div class="docs-editor-meta" id="docsEditorMeta"></div>
+    <div class="docs-editor-body" id="docsEditorBody"></div>
+  </div>
+</div>
+
 <!-- Docs: project list -->
 <div class="modal-overlay" id="docsListModal" onclick="if(event.target===this)docsCloseList()">
   <div class="modal docs-list">
     <h3>나의 프로젝트 문서</h3>
-    <div id="docsListContent" class="docs-empty">(문서 목록은 다음 커밋에서 구현됩니다)</div>
+    <div id="docsListContent" class="docs-list-loading">(불러오는 중...)</div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="docsCloseList()">닫기</button>
     </div>
@@ -302,6 +351,7 @@ const SLOT_COUNT=(HOUR_END-HOUR_START)*60/SLOT_MIN;   // 36
 
 // ── State ──
 let shortcuts=[], bookmarks=[], templates=[];
+let docList=[], editorState=null, editorDraftTimer=null;
 let dailyJob={items:[],lastResetDate:''};
 let brainDump=[];
 let timeplanByDate={};   // { 'YYYY-MM-DD': [blocks] }
@@ -813,6 +863,8 @@ function blockDelete(){
 }
 
 // ── Docs (templates + project documents) ──
+const DOCS_DRAFT_KEY='hp:docs_draft';
+
 function docsOpenNew(){
   if(!templates.length){alert('템플릿을 불러오는 중입니다. 잠시 후 다시 시도하세요.');return;}
   docsRenderPicker();
@@ -829,12 +881,254 @@ function docsRenderPicker(){
 }
 function docsPick(id){
   const t=templates.find(x=>x.id===id);
-  console.log('docsPick',id,t);
+  if(!t)return;
   docsClosePicker();
-  // TODO(next commit): open editor with template `t`
+  docsEditorOpen({
+    templateId:t.id,
+    docId:null,
+    title:'',
+    sections:(t.sections||[]).map(s=>({q:s.q,hint:s.hint||'',a:s.hint||''}))
+  });
 }
-function docsOpenList(){document.getElementById('docsListModal').classList.add('active');}
+
+// ── Editor ──
+function docsEditorOpen(state){
+  editorState={dirty:false,createdAt:null,...state};
+  document.getElementById('docsEditorTitle').value=editorState.title||'';
+  const tpl=templates.find(t=>t.id===editorState.templateId);
+  document.getElementById('docsEditorMeta').textContent=
+    (tpl?tpl.label:'')
+    +(editorState.docId&&editorState.updatedAt?` · 수정: ${editorState.updatedAt.slice(0,16).replace('T',' ')}`:'');
+  docsRenderEditorBody();
+  document.getElementById('docsEditorModal').classList.add('active');
+  document.getElementById('docsEditorTitle').oninput=(e)=>{
+    editorState.title=e.target.value;
+    editorState.dirty=true;
+    docsScheduleDraft();
+  };
+  if(!editorState.docId)docsTryRestoreDraft();
+}
+function docsRenderEditorBody(){
+  const body=document.getElementById('docsEditorBody');
+  body.innerHTML=editorState.sections.map((s,i)=>{
+    const isHint=s.a===s.hint && s.hint!=='';
+    return `<div class="docs-section">`
+      +`<label class="docs-section-q">${escapeHtml(s.q)}</label>`
+      +`<textarea class="docs-section-a${isHint?' has-hint':''}" data-idx="${i}" oninput="docsOnSectionInput(this)" rows="4">${escapeHtml(s.a)}</textarea>`
+      +`</div>`;
+  }).join('');
+}
+function docsOnSectionInput(el){
+  const idx=+el.dataset.idx;
+  editorState.sections[idx].a=el.value;
+  if(el.classList.contains('has-hint'))el.classList.remove('has-hint');
+  editorState.dirty=true;
+  docsScheduleDraft();
+}
+function docsEditorClose(){
+  if(editorState && editorState.dirty){
+    if(!confirm('작성 중인 내용이 사라집니다. 닫을까요?'))return;
+  }
+  document.getElementById('docsEditorModal').classList.remove('active');
+  docsClearDraft();
+  editorState=null;
+}
+async function docsEditorSave(){
+  if(!editorState)return;
+  if(!isTokenValid()){alert('Google 로그인이 필요합니다.');return;}
+  if(!editorState.title.trim()){
+    const tpl=templates.find(t=>t.id===editorState.templateId);
+    const label=tpl?tpl.label:'문서';
+    const d=new Date();
+    const stamp=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')
+      +'_'+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0');
+    editorState.title=`${label}_${stamp}`;
+    document.getElementById('docsEditorTitle').value=editorState.title;
+  }
+  const now=new Date().toISOString();
+  const doc={
+    id:editorState.docId||uid(),
+    templateId:editorState.templateId,
+    title:editorState.title,
+    createdAt:editorState.createdAt||now,
+    updatedAt:now,
+    sections:editorState.sections.map(s=>({q:s.q,a:s.a}))
+  };
+  const fname=`doc-${doc.id}.json`;
+  const ok=await docsSaveToDrive(fname,doc);
+  if(!ok){alert('저장 실패. 네트워크 또는 권한을 확인하세요. (작성 중 내용은 보존됩니다)');return;}
+  editorState.dirty=false;
+  docsClearDraft();
+  document.getElementById('docsEditorModal').classList.remove('active');
+  editorState=null;
+}
+async function docsSaveToDrive(fname,doc){
+  if(!isTokenValid())return false;
+  try{
+    const existing=await driveFind(fname);
+    if(existing)await driveUpdate(existing.id,doc);
+    else await driveCreate(fname,doc);
+    return true;
+  }catch(e){console.error('docs save failed',fname,e);return false;}
+}
+
+// ── Draft auto-save (localStorage) ──
+function docsScheduleDraft(){
+  if(editorDraftTimer)clearTimeout(editorDraftTimer);
+  editorDraftTimer=setTimeout(docsSaveDraft,300);
+}
+function docsSaveDraft(){
+  if(!editorState)return;
+  try{localStorage.setItem(DOCS_DRAFT_KEY,JSON.stringify({...editorState,savedAt:Date.now()}));}catch(_){}
+}
+function docsClearDraft(){try{localStorage.removeItem(DOCS_DRAFT_KEY);}catch(_){}}
+function docsTryRestoreDraft(){
+  let d;try{const raw=localStorage.getItem(DOCS_DRAFT_KEY);if(!raw)return;d=JSON.parse(raw);}catch(_){return;}
+  if(!d||d.templateId!==editorState.templateId)return;
+  if(!confirm('저장하지 않은 작성 중 문서가 있습니다. 복구하시겠습니까?')){docsClearDraft();return;}
+  editorState={...d,dirty:true};
+  document.getElementById('docsEditorTitle').value=editorState.title||'';
+  docsRenderEditorBody();
+}
+
+// ── List browser ──
+async function docsOpenList(){
+  document.getElementById('docsListModal').classList.add('active');
+  const content=document.getElementById('docsListContent');
+  if(!isTokenValid()){
+    content.className='docs-list-loading';
+    content.textContent='Google 로그인이 필요합니다.';
+    return;
+  }
+  content.className='docs-list-loading';
+  content.textContent='불러오는 중...';
+  docList=await docsFetchAll();
+  docsRenderList();
+}
 function docsCloseList(){document.getElementById('docsListModal').classList.remove('active');}
+
+async function docsFetchAll(){
+  const q=`name contains 'doc-' and 'appDataFolder' in parents and trashed=false`;
+  const r=await driveFetchJson(`${DRIVE_API}/files?spaces=appDataFolder&q=${encodeURIComponent(q)}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&pageSize=200`);
+  if(!r||!r.files)return [];
+  const docs=[];
+  for(const f of r.files){
+    if(!f.name.startsWith('doc-'))continue;
+    const d=await driveLoad(f.id);
+    if(d && d.id)docs.push({...d,_driveId:f.id});
+  }
+  return docs;
+}
+function docsRenderList(){
+  const content=document.getElementById('docsListContent');
+  if(!docList.length){
+    content.className='docs-list-loading';
+    content.textContent='저장된 문서가 없습니다.';
+    return;
+  }
+  content.className='';
+  const sorted=[...docList].sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));
+  content.innerHTML=sorted.map(d=>{
+    const tpl=templates.find(t=>t.id===d.templateId);
+    const tplLabel=tpl?tpl.label:(d.templateId||'');
+    const upd=d.updatedAt?d.updatedAt.slice(0,16).replace('T',' '):'';
+    return `<div class="docs-list-row" ondblclick="docsListOpen('${escapeHtml(d.id)}')" title="더블클릭하여 열기">`
+      +`<div class="docs-list-info">`
+        +`<div class="docs-list-title">${escapeHtml(d.title||'(제목 없음)')}</div>`
+        +`<div class="docs-list-meta">${escapeHtml(tplLabel)} · ${upd}</div>`
+      +`</div>`
+      +`<div class="docs-list-actions">`
+        +`<button onclick="event.stopPropagation();docsListDownload('${escapeHtml(d.id)}','md')">.md</button>`
+        +`<button onclick="event.stopPropagation();docsListDownload('${escapeHtml(d.id)}','txt')">.txt</button>`
+        +`<button class="docs-list-del" onclick="event.stopPropagation();docsListDelete('${escapeHtml(d.id)}')">삭제</button>`
+      +`</div>`
+    +`</div>`;
+  }).join('');
+}
+function docsListOpen(id){
+  const d=docList.find(x=>x.id===id);
+  if(!d)return;
+  const tpl=templates.find(t=>t.id===d.templateId);
+  const tplSections=tpl?tpl.sections:[];
+  const sections=(d.sections||[]).map((s,i)=>({
+    q:s.q,
+    hint:tplSections[i]?(tplSections[i].hint||''):'',
+    a:s.a||''
+  }));
+  docsCloseList();
+  docsEditorOpen({
+    templateId:d.templateId,
+    docId:d.id,
+    title:d.title||'',
+    createdAt:d.createdAt,
+    updatedAt:d.updatedAt,
+    sections
+  });
+}
+function docsListDownload(id,fmt){
+  const d=docList.find(x=>x.id===id);
+  if(!d)return;
+  docsDownload(d,fmt);
+}
+async function docsListDelete(id){
+  if(!confirm('이 문서를 삭제할까요? Drive에서도 제거됩니다.'))return;
+  const d=docList.find(x=>x.id===id);
+  if(!d)return;
+  let driveId=d._driveId;
+  if(!driveId){
+    const existing=await driveFind(`doc-${d.id}.json`);
+    driveId=existing?existing.id:null;
+  }
+  if(driveId){
+    const ok=await driveDelete(driveId);
+    if(!ok){alert('삭제 실패');return;}
+  }
+  docList=docList.filter(x=>x.id!==id);
+  docsRenderList();
+}
+async function driveDelete(fileId){
+  if(!isTokenValid())return false;
+  const doReq=()=>fetch(`${DRIVE_API}/files/${fileId}`,{method:'DELETE',headers:{Authorization:'Bearer '+accessToken}});
+  try{
+    let r=await doReq();
+    if(r.status===401 && await refreshToken())r=await doReq();
+    return r.ok || r.status===204;
+  }catch(e){console.error('drive delete failed',e);return false;}
+}
+
+// ── Export to MD / TXT ──
+function docsDownload(doc,fmt){
+  const safe=(doc.title||'document').replace(/[\\/:*?"<>|]/g,'_');
+  if(fmt==='md')downloadBlob(safe+'.md',docToMarkdown(doc),'text/markdown;charset=utf-8');
+  else downloadBlob(safe+'.txt',docToText(doc),'text/plain;charset=utf-8');
+}
+function docToMarkdown(doc){
+  const tpl=templates.find(t=>t.id===doc.templateId);
+  let md=`# ${doc.title}\n\n`;
+  if(tpl)md+=`> 템플릿: ${tpl.label}  \n`;
+  if(doc.createdAt)md+=`> 작성: ${doc.createdAt}  \n`;
+  if(doc.updatedAt)md+=`> 수정: ${doc.updatedAt}\n`;
+  md+='\n---\n\n';
+  for(const s of (doc.sections||[])){
+    md+=`## ${s.q}\n\n${s.a||''}\n\n`;
+  }
+  return md;
+}
+function docToText(doc){
+  const t=doc.title||'document';
+  let txt=`${t}\n${'='.repeat(Math.max(t.length,4))}\n\n`;
+  for(const s of (doc.sections||[])){
+    txt+=`${s.q}\n${'-'.repeat(Math.max(s.q.length,4))}\n${s.a||''}\n\n`;
+  }
+  return txt;
+}
+function downloadBlob(filename,content,mime){
+  const blob=new Blob([content],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 
 // ── Master render ──
 function renderAll(){renderAuth();renderBookmarks();renderShortcuts();renderDailyJob();renderBrainDump();renderTimePlan();}

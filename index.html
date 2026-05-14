@@ -19,7 +19,7 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg-primary);color:var(--text-primary);font-family:'Outfit','Noto Sans KR',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-y:auto;}
 
-  /* Auth (placeholder — populated in Phase C with Google Identity Services) */
+  /* Auth */
   .auth-bar{position:fixed;top:12px;right:16px;z-index:50;display:flex;align-items:center;gap:10px;}
   .auth-bar .user-name{font-size:12px;color:var(--text-secondary);}
   .auth-bar .user-avatar{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid var(--bg-tertiary);}
@@ -53,7 +53,7 @@
   .shortcut-icon img{width:24px;height:24px;border-radius:2px;}
   .shortcut-label{font-size:12px;color:var(--text-secondary);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;}
 
-  /* Modal (reserved for Phase C — Brain Dump, Time Plan blocks) */
+  /* Modal (shared) */
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;align-items:center;justify-content:center;}
   .modal-overlay.active{display:flex;}
   .modal{background:var(--bg-secondary);border-radius:var(--radius);padding:24px;width:420px;max-width:90vw;box-shadow:0 8px 32px var(--shadow);}
@@ -68,11 +68,82 @@
   .modal-actions button{padding:8px 20px;border:none;border-radius:var(--radius-sm);font-size:14px;font-family:inherit;cursor:pointer;transition:all .15s;}
   .btn-cancel{background:var(--bg-tertiary);color:var(--text-primary);}.btn-cancel:hover{background:var(--bg-hover);}
   .btn-save{background:var(--accent);color:#202124;font-weight:600;}.btn-save:hover{background:var(--accent-hover);}
+  .btn-danger{background:var(--danger-dim);color:var(--danger);}.btn-danger:hover{background:var(--danger);color:#202124;}
+
+  /* Planner layout */
+  .planner{display:flex;gap:16px;width:100%;max-width:1100px;padding:0 16px;margin-bottom:60px;align-items:flex-start;}
+  .planner-left{display:flex;flex-direction:column;gap:12px;width:320px;flex-shrink:0;}
+  .planner-right{flex:1;min-width:0;}
+  .panel{background:var(--bg-secondary);border-radius:var(--radius);padding:16px;}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .panel-title{font-size:14px;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:6px;}
+  .panel-sub{font-size:10px;color:var(--text-muted);font-weight:400;}
+  .panel-add{padding:4px 10px;background:var(--accent-dim);color:var(--accent);border:1px solid rgba(138,180,248,0.25);border-radius:14px;font-size:11px;font-family:inherit;cursor:pointer;transition:all .15s;}
+  .panel-add:hover{background:var(--accent);color:#202124;border-color:var(--accent);}
+
+  /* Daily Job */
+  .dj-input-row{display:flex;gap:6px;margin-bottom:10px;}
+  .dj-input{flex:1;height:32px;background:var(--bg-primary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);padding:0 10px;color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;}
+  .dj-input:focus{border-color:var(--accent);}
+  .dj-add{padding:0 12px;background:var(--accent);color:#202124;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;}
+  .dj-add:hover{background:var(--accent-hover);}
+  .dj-list{display:flex;flex-direction:column;gap:4px;max-height:280px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg-tertiary) transparent;}
+  .dj-list::-webkit-scrollbar{width:5px;}.dj-list::-webkit-scrollbar-thumb{background:var(--bg-tertiary);border-radius:4px;}
+  .dj-item{display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg-primary);border-radius:var(--radius-sm);cursor:grab;}
+  .dj-item:hover{background:var(--bg-tertiary);}
+  .dj-item.done{opacity:.5;}
+  .dj-item.done .dj-text{text-decoration:line-through;color:var(--text-muted);}
+  .dj-check{width:16px;height:16px;border:2px solid var(--border);border-radius:50%;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .dj-item.done .dj-check{background:var(--success-dim);border-color:var(--success);}
+  .dj-check svg{display:none;color:var(--success);}
+  .dj-item.done .dj-check svg{display:block;}
+  .dj-text{flex:1;font-size:13px;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .dj-del{width:20px;height:20px;border:none;background:none;color:var(--text-muted);cursor:pointer;opacity:0;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .dj-item:hover .dj-del{opacity:1;}
+  .dj-del:hover{background:var(--danger-dim);color:var(--danger);}
+  .empty-msg{text-align:center;padding:14px;color:var(--text-muted);font-size:12px;}
+
+  /* Brain Dump */
+  .brain-list{display:flex;flex-direction:column;gap:6px;max-height:480px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg-tertiary) transparent;}
+  .brain-list::-webkit-scrollbar{width:5px;}.brain-list::-webkit-scrollbar-thumb{background:var(--bg-tertiary);border-radius:4px;}
+  .brain-item{display:flex;flex-direction:column;gap:3px;padding:8px 10px;background:var(--bg-primary);border-radius:var(--radius-sm);border-left:3px solid var(--text-muted);cursor:grab;}
+  .brain-item:hover{background:var(--bg-tertiary);}
+  .brain-row{display:flex;align-items:center;gap:6px;}
+  .brain-cat{font-size:9px;padding:2px 7px;border-radius:10px;color:#202124;font-weight:700;flex-shrink:0;}
+  .brain-name{flex:1;font-size:13px;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .brain-meta{font-size:10px;color:var(--text-muted);}
+
+  /* Time Plan */
+  .tp-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:0 4px;}
+  .tp-nav{width:32px;height:32px;background:var(--bg-secondary);border:none;border-radius:50%;color:var(--text-secondary);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;}
+  .tp-nav:hover{background:var(--bg-tertiary);color:var(--text-primary);}
+  .tp-date-wrap{flex:1;display:flex;align-items:center;gap:6px;}
+  .tp-date-wrap input[type=date]{background:none;border:none;color:var(--text-primary);font:600 15px 'Outfit','Noto Sans KR',sans-serif;outline:none;cursor:pointer;color-scheme:dark;}
+  .tp-dow{font-size:13px;color:var(--text-muted);}
+  .tp-today{padding:6px 14px;background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);color:var(--text-secondary);font-size:12px;font-family:inherit;cursor:pointer;}
+  .tp-today:hover{background:var(--bg-tertiary);color:var(--text-primary);}
+
+  .time-grid{position:relative;background:var(--bg-secondary);border-radius:var(--radius);padding:12px 12px 24px 50px;}
+  .time-grid-inner{position:relative;}
+  .time-row{position:relative;height:30px;border-top:1px dashed rgba(95,99,104,0.3);}
+  .time-row.hour{border-top:1px solid var(--border);}
+  .time-row:first-child{border-top:1px solid var(--border);}
+  .time-label{position:absolute;left:-44px;top:-7px;font-size:10px;color:var(--text-muted);width:40px;text-align:right;font-family:'Outfit',monospace;}
+  .time-row.drop-over{background:var(--accent-dim);}
+  .time-end-label{position:absolute;left:-44px;font-size:10px;color:var(--text-muted);width:40px;text-align:right;font-family:'Outfit',monospace;}
+
+  .block{position:absolute;left:6px;right:6px;padding:6px 10px;border-radius:var(--radius-sm);border-left:3px solid var(--text-muted);background:var(--bg-tertiary);cursor:grab;overflow:hidden;z-index:1;box-shadow:0 2px 6px var(--shadow);user-select:none;}
+  .block:hover{filter:brightness(1.15);z-index:2;}
+  .block.dragging{opacity:.4;}
+  .block-text{font-size:12px;color:var(--text-primary);line-height:1.3;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;font-weight:500;}
+  .block-time{font-size:10px;color:var(--text-secondary);margin-top:2px;}
+  .block-handle{position:absolute;left:0;right:0;height:6px;cursor:ns-resize;background:transparent;z-index:3;}
+  .block-handle.top{top:-3px;}
+  .block-handle.bot{bottom:-3px;}
 </style>
 </head>
-<body>
+<body ondragend="onGlobalDragEnd()">
 <div class="auth-bar" id="authBar"></div>
-
 <div class="bookmark-bar" id="bookmarkBar"></div>
 
 <div class="search-container">
@@ -85,19 +156,284 @@
 
 <div class="shortcuts-grid" id="shortcutsGrid"></div>
 
-<script>
-// ── State (static data loaded from git-committed JSON) ──
-let shortcuts=[], bookmarks=[];
+<div class="planner">
+  <div class="planner-left">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Daily Job<span class="panel-sub">06:00 KST 리셋</span></div>
+      </div>
+      <div class="dj-input-row">
+        <input type="text" class="dj-input" id="djInput" placeholder="오늘의 할 일..." autocomplete="off">
+        <button class="dj-add" onclick="djAdd()">추가</button>
+      </div>
+      <div class="dj-list" id="djList"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Brain Dump<span class="panel-sub">누적</span></div>
+        <button class="panel-add" onclick="bdOpenAdd()">+ 추가</button>
+      </div>
+      <div class="brain-list" id="bdList"></div>
+    </div>
+  </div>
+  <div class="planner-right">
+    <div class="tp-head">
+      <button class="tp-nav" onclick="tpPrev()" title="이전 날">‹</button>
+      <div class="tp-date-wrap">
+        <input type="date" id="tpDate" onchange="tpSetDate(this.value)">
+        <span class="tp-dow" id="tpDow"></span>
+      </div>
+      <button class="tp-today" onclick="tpToday()">오늘</button>
+      <button class="tp-nav" onclick="tpNext()" title="다음 날">›</button>
+    </div>
+    <div class="time-grid">
+      <div class="time-grid-inner" id="tpGrid"></div>
+    </div>
+  </div>
+</div>
 
-// ── Static data loaders ──
-async function fetchShortcuts(){
-  try{const r=await fetch('./data/shortcuts.json',{cache:'no-cache'});shortcuts=await r.json();}
-  catch(e){console.error('shortcuts.json 로드 실패',e);shortcuts=[];}
+<!-- Brain Dump add/edit modal -->
+<div class="modal-overlay" id="bdModal" onclick="if(event.target===this)bdClose()">
+  <div class="modal">
+    <h3 id="bdModalTitle">새 업무 추가</h3>
+    <label>업무명</label>
+    <input type="text" id="bdName" placeholder="업무 내용을 입력하세요..." autocomplete="off">
+    <label>분류</label>
+    <select id="bdCategory">
+      <option value="피치">피치</option>
+      <option value="타이탄">타이탄</option>
+      <option value="오로라">오로라</option>
+      <option value="개인플젝">개인플젝</option>
+      <option value="기타" selected>기타</option>
+    </select>
+    <div id="bdCreatedAt" style="font-size:11px;color:var(--text-muted);margin-bottom:14px;"></div>
+    <div class="modal-actions">
+      <button class="btn-danger" id="bdDeleteBtn" style="display:none;" onclick="bdDelete()">삭제</button>
+      <button class="btn-cancel" onclick="bdClose()">취소</button>
+      <button class="btn-save" onclick="bdSave()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- Time Plan block edit modal -->
+<div class="modal-overlay" id="blockModal" onclick="if(event.target===this)blockClose()">
+  <div class="modal">
+    <h3>블록 편집</h3>
+    <label>제목</label>
+    <input type="text" id="blockText" autocomplete="off">
+    <div class="modal-row">
+      <div>
+        <label>시작</label>
+        <input type="time" id="blockStart" step="1800">
+      </div>
+      <div>
+        <label>끝</label>
+        <input type="time" id="blockEnd" step="1800">
+      </div>
+    </div>
+    <label>분류</label>
+    <select id="blockCategory">
+      <option value="피치">피치</option>
+      <option value="타이탄">타이탄</option>
+      <option value="오로라">오로라</option>
+      <option value="개인플젝">개인플젝</option>
+      <option value="기타">기타</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-danger" onclick="blockDelete()">삭제</button>
+      <button class="btn-cancel" onclick="blockClose()">취소</button>
+      <button class="btn-save" onclick="blockSave()">저장</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://accounts.google.com/gsi/client" onload="onGsiLoad()" async defer></script>
+<script>
+// ── Config ──
+const CLIENT_ID='676989045728-c3bavcs39ppmvvekb92lbnmssrs66bkj.apps.googleusercontent.com';
+const SCOPES='openid email profile https://www.googleapis.com/auth/drive.appdata';
+const CAT_COLOR={'피치':'#f28b82','타이탄':'#fdd663','오로라':'#81c995','개인플젝':'#8ab4f8','기타':'#9aa0a6'};
+const SLOT_MIN=30, SLOT_PX=30, HOUR_START=6, HOUR_END=24;
+const SLOT_COUNT=(HOUR_END-HOUR_START)*60/SLOT_MIN;   // 36
+
+// ── State ──
+let shortcuts=[], bookmarks=[];
+let dailyJob={items:[],lastResetDate:''};
+let brainDump=[];
+let timeplanByDate={};   // { 'YYYY-MM-DD': [blocks] }
+let currentDate=getPlannerDate();
+let userProfile=null, editingBrainId=null, editingBlockId=null, dragData=null;
+
+// ── Auth (Google Identity Services) ──
+let tokenClient=null, accessToken=null, tokenExpiry=0;
+function isTokenValid(){return !!accessToken && Date.now()<tokenExpiry-60000;}
+
+function onGsiLoad(){
+  tokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:CLIENT_ID, scope:SCOPES, prompt:'',
+    callback:onTokenResponse
+  });
+  const t=sessionStorage.getItem('drive_token'),
+        e=parseInt(sessionStorage.getItem('drive_token_expiry')||'0'),
+        p=sessionStorage.getItem('drive_user');
+  if(t && Date.now()<e-60000){
+    accessToken=t; tokenExpiry=e;
+    if(p){try{userProfile=JSON.parse(p);}catch(_){}}
+    renderAuth(); loadAllFromDrive();
+  }else{
+    renderAuth();
+  }
 }
-async function fetchBookmarks(){
-  try{const r=await fetch('./data/bookmarks.json',{cache:'no-cache'});bookmarks=await r.json();}
-  catch(e){console.error('bookmarks.json 로드 실패',e);bookmarks=[];}
+
+function onTokenResponse(r){
+  if(r && r.access_token){
+    accessToken=r.access_token;
+    tokenExpiry=Date.now()+(r.expires_in||3600)*1000;
+    sessionStorage.setItem('drive_token',accessToken);
+    sessionStorage.setItem('drive_token_expiry',tokenExpiry+'');
+    fetchUserProfile().then(()=>{renderAuth(); loadAllFromDrive();});
+  }else{
+    console.error('token response failed',r);
+    alert('Google 로그인 실패');
+  }
 }
+
+async function fetchUserProfile(){
+  try{
+    const r=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+accessToken}});
+    if(!r.ok)return;
+    const d=await r.json();
+    userProfile={email:d.email,name:d.name,picture:d.picture};
+    sessionStorage.setItem('drive_user',JSON.stringify(userProfile));
+  }catch(e){console.error('userinfo failed',e);}
+}
+
+function doLogin(){
+  if(!tokenClient){alert('Google 라이브러리 로딩 중. 잠시 후 다시 시도하세요.');return;}
+  tokenClient.requestAccessToken({prompt:'consent'});
+}
+
+function doLogout(){
+  if(accessToken)try{google.accounts.oauth2.revoke(accessToken,()=>{});}catch(_){}
+  accessToken=null; tokenExpiry=0; userProfile=null;
+  sessionStorage.removeItem('drive_token');
+  sessionStorage.removeItem('drive_token_expiry');
+  sessionStorage.removeItem('drive_user');
+  renderAuth();
+}
+
+function renderAuth(){
+  const bar=document.getElementById('authBar');
+  if(isTokenValid()){
+    const p=userProfile||{};
+    bar.innerHTML=`<span class="sync-badge">Drive 연결</span>`
+      +(p.name||p.email?`<span class="user-name">${escapeHtml(p.name||p.email)}</span>`:'')
+      +(p.picture?`<img class="user-avatar" src="${p.picture}" title="로그아웃" onclick="doLogout()">`:'')
+      +`<button class="btn-auth logout" onclick="doLogout()">로그아웃</button>`;
+  }else{
+    bar.innerHTML='<button class="btn-auth" onclick="doLogin()">Google 로그인</button>';
+  }
+}
+
+// ── Drive API wrapper (appDataFolder) ──
+const DRIVE_API='https://www.googleapis.com/drive/v3';
+const DRIVE_UPLOAD='https://www.googleapis.com/upload/drive/v3';
+
+async function driveFind(name){
+  const q=`name='${name}' and 'appDataFolder' in parents and trashed=false`;
+  const r=await driveFetchJson(`${DRIVE_API}/files?spaces=appDataFolder&q=${encodeURIComponent(q)}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc`);
+  if(!r||!r.files||!r.files.length)return null;
+  return r.files[0];
+}
+
+async function driveLoad(fileId){
+  return driveFetchJson(`${DRIVE_API}/files/${fileId}?alt=media`);
+}
+
+async function driveCreate(name,content){
+  const metadata={name,parents:['appDataFolder']};
+  const boundary='-----'+Math.random().toString(36).slice(2);
+  const body=`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(content)}\r\n--${boundary}--`;
+  return driveFetchJson(`${DRIVE_UPLOAD}/files?uploadType=multipart&fields=id`,{
+    method:'POST',
+    headers:{'Content-Type':`multipart/related; boundary=${boundary}`},
+    body
+  });
+}
+
+async function driveUpdate(fileId,content){
+  return driveFetchJson(`${DRIVE_UPLOAD}/files/${fileId}?uploadType=media`,{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(content)
+  });
+}
+
+async function driveSave(name,content){
+  if(!isTokenValid())return;
+  try{
+    const existing=await driveFind(name);
+    if(existing)await driveUpdate(existing.id,content);
+    else await driveCreate(name,content);
+  }catch(e){console.error('drive save failed',name,e);}
+}
+
+async function driveFetchJson(url,opts={}){
+  if(!isTokenValid())return null;
+  opts.headers=Object.assign({Authorization:'Bearer '+accessToken},opts.headers||{});
+  let r;
+  try{r=await fetch(url,opts);}catch(e){console.error('drive fetch network error',e);return null;}
+  if(r.status===401){
+    // try silent refresh once
+    const ok=await refreshToken();
+    if(!ok)return null;
+    opts.headers.Authorization='Bearer '+accessToken;
+    try{r=await fetch(url,opts);}catch(e){return null;}
+  }
+  if(!r.ok){console.error('drive fetch failed',url,r.status);return null;}
+  if(r.status===204)return null;
+  return r.json();
+}
+
+function refreshToken(){
+  return new Promise(res=>{
+    if(!tokenClient){res(false);return;}
+    const orig=tokenClient.callback;
+    tokenClient.callback=(tr)=>{
+      tokenClient.callback=orig;
+      if(tr && tr.access_token){
+        accessToken=tr.access_token;
+        tokenExpiry=Date.now()+(tr.expires_in||3600)*1000;
+        sessionStorage.setItem('drive_token',accessToken);
+        sessionStorage.setItem('drive_token_expiry',tokenExpiry+'');
+        res(true);
+      }else res(false);
+    };
+    try{tokenClient.requestAccessToken({prompt:''});}catch(e){tokenClient.callback=orig;res(false);}
+  });
+}
+
+// ── localStorage cache ──
+function cacheGet(key){try{return JSON.parse(localStorage.getItem('hp:'+key));}catch(_){return null;}}
+function cacheSet(key,val){try{localStorage.setItem('hp:'+key,JSON.stringify(val));}catch(_){}}
+
+// ── Date helpers ──
+function getPlannerDate(){
+  // KST date, but rolls over at 06:00 instead of 00:00
+  const n=new Date();
+  const kst=new Date(n.getTime()+(9*3600000));
+  if(kst.getUTCHours()<6)kst.setUTCDate(kst.getUTCDate()-1);
+  return kst.toISOString().slice(0,10);
+}
+function addDays(date,n){const d=new Date(date+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
+function dowKor(date){return ['일','월','화','수','목','금','토'][new Date(date+'T00:00:00Z').getUTCDay()];}
+
+// ── Helpers ──
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML;}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+function pad2(n){return String(n).padStart(2,'0');}
+function minToTime(m){return pad2(Math.floor(m/60))+':'+pad2(m%60);}
+function timeToMin(hhmm){const [h,m]=hhmm.split(':').map(Number);return h*60+m;}
 
 // ── Search ──
 document.getElementById('searchInput').addEventListener('keydown',e=>{
@@ -116,30 +452,328 @@ function calIcon(){
   return c.toDataURL();
 }
 
-// ── Bookmark rendering ──
+// ── Static loaders ──
+async function fetchShortcuts(){try{const r=await fetch('./data/shortcuts.json',{cache:'no-cache'});shortcuts=await r.json();}catch(e){console.error('shortcuts.json',e);shortcuts=[];}}
+async function fetchBookmarks(){try{const r=await fetch('./data/bookmarks.json',{cache:'no-cache'});bookmarks=await r.json();}catch(e){console.error('bookmarks.json',e);bookmarks=[];}}
+
 function renderBookmarks(){
-  const b=document.getElementById('bookmarkBar');
-  b.innerHTML=bookmarks.map(bm=>`<a class="bm-pill" href="${bm.url}"><span class="bm-emoji">${bm.emoji}</span>${escapeHtml(bm.name)}</a>`).join('');
+  document.getElementById('bookmarkBar').innerHTML=bookmarks.map(b=>`<a class="bm-pill" href="${b.url}"><span class="bm-emoji">${b.emoji||''}</span>${escapeHtml(b.name)}</a>`).join('');
 }
 
-// ── Shortcut rendering ──
 function renderShortcuts(){
   const g=document.getElementById('shortcutsGrid');g.innerHTML='';
   shortcuts.forEach(s=>{const a=document.createElement('a');a.className='shortcut';a.href=s.url;
     const ic=s.icon==='__CAL__'?calIcon():s.icon;
-    a.innerHTML=`<div class="shortcut-icon"><img src="${ic}" alt="" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22><text y=%2218%22 font-size=%2216%22>${s.name[0]}</text></svg>'"></div><span class="shortcut-label">${escapeHtml(s.name)}</span>`;
+    a.innerHTML=`<div class="shortcut-icon"><img src="${ic}" alt="" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22><text y=%2218%22 font-size=%2216%22>${s.name?s.name[0]:''}</text></svg>'"></div><span class="shortcut-label">${escapeHtml(s.name)}</span>`;
     g.appendChild(a);});
 }
 
-// ── Helpers (preserved for Phase C) ──
-function getKSTDateString(){const n=new Date();return new Date(n.getTime()+(9*3600000)).toISOString().slice(0,10);}
-function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+// ── Drive sync (debounced) ──
+const saveQueue={};
+function scheduleSave(name,getContent){
+  if(saveQueue[name])clearTimeout(saveQueue[name]);
+  saveQueue[name]=setTimeout(()=>{driveSave(name,getContent());delete saveQueue[name];},300);
+}
+
+async function loadAllFromDrive(){
+  // cache→paint already happened in init; this fetches latest from Drive
+  await Promise.all([loadDailyJob(),loadBrainDump(),loadTimeplan(currentDate)]);
+  checkDailyJobReset();
+  renderAll();
+}
+
+async function loadDailyJob(){
+  const f=await driveFind('dailyJob.json');
+  if(!f)return;
+  const d=await driveLoad(f.id);
+  if(d && typeof d==='object'){dailyJob=d;cacheSet('dailyJob',d);}
+}
+
+async function loadBrainDump(){
+  const f=await driveFind('brainDump.json');
+  if(!f)return;
+  const d=await driveLoad(f.id);
+  if(Array.isArray(d)){brainDump=d;cacheSet('brainDump',d);}
+}
+
+async function loadTimeplan(date){
+  if(!isTokenValid())return;
+  const f=await driveFind('timeplan-'+date+'.json');
+  if(!f){if(!timeplanByDate[date])timeplanByDate[date]=[];return;}
+  const d=await driveLoad(f.id);
+  if(Array.isArray(d)){timeplanByDate[date]=d;cacheSet('tp:'+date,d);}
+}
+
+function saveDailyJob(){cacheSet('dailyJob',dailyJob);scheduleSave('dailyJob.json',()=>dailyJob);}
+function saveBrainDump(){cacheSet('brainDump',brainDump);scheduleSave('brainDump.json',()=>brainDump);}
+function saveTimeplan(date){const d=timeplanByDate[date]||[];cacheSet('tp:'+date,d);scheduleSave('timeplan-'+date+'.json',()=>d);}
+
+// ── Daily Job ──
+function checkDailyJobReset(){
+  const pd=getPlannerDate();
+  if(dailyJob.lastResetDate!==pd){
+    dailyJob={items:[],lastResetDate:pd};
+    saveDailyJob();
+  }
+}
+
+function djAdd(){
+  const inp=document.getElementById('djInput'),t=inp.value.trim();if(!t)return;
+  dailyJob.items.push({id:uid(),text:t,done:false});
+  if(!dailyJob.lastResetDate)dailyJob.lastResetDate=getPlannerDate();
+  inp.value='';saveDailyJob();renderDailyJob();
+}
+function djToggle(id){const it=dailyJob.items.find(i=>i.id===id);if(it){it.done=!it.done;saveDailyJob();renderDailyJob();}}
+function djDelete(id){dailyJob.items=dailyJob.items.filter(i=>i.id!==id);saveDailyJob();renderDailyJob();}
+
+function renderDailyJob(){
+  const l=document.getElementById('djList');
+  if(!dailyJob.items.length){l.innerHTML='<div class="empty-msg">오늘 할 일을 추가하세요</div>';return;}
+  l.innerHTML=dailyJob.items.map(it=>`<div class="dj-item ${it.done?'done':''}" draggable="true" ondragstart="onDragStart(event,'dj','${it.id}')">
+    <div class="dj-check" onclick="djToggle('${it.id}')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+    <span class="dj-text">${escapeHtml(it.text)}</span>
+    <button class="dj-del" onclick="djDelete('${it.id}')" title="삭제"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>`).join('');
+}
+document.getElementById('djInput').addEventListener('keydown',e=>{if(e.key==='Enter')djAdd();});
+
+// ── Brain Dump ──
+function bdOpenAdd(){
+  editingBrainId=null;
+  document.getElementById('bdModalTitle').textContent='새 업무 추가';
+  document.getElementById('bdName').value='';
+  document.getElementById('bdCategory').value='기타';
+  document.getElementById('bdCreatedAt').textContent='';
+  document.getElementById('bdDeleteBtn').style.display='none';
+  document.getElementById('bdModal').classList.add('active');
+  setTimeout(()=>document.getElementById('bdName').focus(),0);
+}
+function bdOpenEdit(id){
+  const it=brainDump.find(b=>b.id===id);if(!it)return;
+  editingBrainId=id;
+  document.getElementById('bdModalTitle').textContent='업무 수정';
+  document.getElementById('bdName').value=it.name;
+  document.getElementById('bdCategory').value=it.category;
+  document.getElementById('bdCreatedAt').textContent='작성일: '+it.createdAt.slice(0,10);
+  document.getElementById('bdDeleteBtn').style.display='inline-block';
+  document.getElementById('bdModal').classList.add('active');
+}
+function bdClose(){document.getElementById('bdModal').classList.remove('active');}
+function bdSave(){
+  const name=document.getElementById('bdName').value.trim();
+  const cat=document.getElementById('bdCategory').value;
+  if(!name)return;
+  if(editingBrainId){
+    const it=brainDump.find(b=>b.id===editingBrainId);
+    if(it){it.name=name;it.category=cat;}    // createdAt locked
+  }else{
+    brainDump.push({id:uid(),name,category:cat,createdAt:new Date().toISOString()});
+  }
+  saveBrainDump();renderBrainDump();bdClose();
+}
+function bdDelete(){
+  if(!editingBrainId)return;
+  brainDump=brainDump.filter(b=>b.id!==editingBrainId);
+  saveBrainDump();renderBrainDump();bdClose();
+}
+
+function renderBrainDump(){
+  const l=document.getElementById('bdList');
+  if(!brainDump.length){l.innerHTML='<div class="empty-msg">업무를 마구 적어두세요</div>';return;}
+  const sorted=[...brainDump].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  l.innerHTML=sorted.map(b=>`<div class="brain-item" style="border-left-color:${CAT_COLOR[b.category]||CAT_COLOR['기타']};" draggable="true" ondragstart="onDragStart(event,'bd','${b.id}')" onclick="bdOpenEdit('${b.id}')">
+    <div class="brain-row">
+      <span class="brain-cat" style="background:${CAT_COLOR[b.category]||CAT_COLOR['기타']};">${escapeHtml(b.category)}</span>
+      <span class="brain-name">${escapeHtml(b.name)}</span>
+    </div>
+    <div class="brain-meta">${(b.createdAt||'').slice(0,10)}</div>
+  </div>`).join('');
+}
+
+// ── Time Plan ──
+function tpPrev(){currentDate=addDays(currentDate,-1);onDateChange();}
+function tpNext(){currentDate=addDays(currentDate,1);onDateChange();}
+function tpToday(){currentDate=getPlannerDate();onDateChange();}
+function tpSetDate(v){if(v){currentDate=v;onDateChange();}}
+
+async function onDateChange(){
+  document.getElementById('tpDate').value=currentDate;
+  // restore from cache for instant paint
+  const c=cacheGet('tp:'+currentDate);
+  timeplanByDate[currentDate]=c||[];
+  renderTimePlan();
+  // then sync from Drive
+  await loadTimeplan(currentDate);
+  renderTimePlan();
+}
+
+function renderTimePlan(){
+  const grid=document.getElementById('tpGrid');
+  document.getElementById('tpDate').value=currentDate;
+  document.getElementById('tpDow').textContent='('+dowKor(currentDate)+')';
+
+  let rowsHtml='';
+  for(let i=0;i<SLOT_COUNT;i++){
+    const time=minToTime(HOUR_START*60+i*SLOT_MIN);
+    const isHour=time.endsWith(':00');
+    rowsHtml+=`<div class="time-row ${isHour?'hour':''}" data-slot="${i}" ondragover="onSlotDragOver(event)" ondragleave="onSlotDragLeave(event)" ondrop="onSlotDrop(event,${i})">${isHour?`<span class="time-label">${time}</span>`:''}</div>`;
+  }
+  // closing 24:00 label
+  rowsHtml+=`<span class="time-end-label" style="top:${SLOT_COUNT*SLOT_PX-7}px;">${HOUR_END===24?'24:00':minToTime(HOUR_END*60)}</span>`;
+
+  const blocks=timeplanByDate[currentDate]||[];
+  let blocksHtml='';
+  blocks.forEach(b=>{
+    const startMin=timeToMin(b.start), endMin=timeToMin(b.end);
+    const top=((startMin-HOUR_START*60)/SLOT_MIN)*SLOT_PX;
+    const height=Math.max(SLOT_PX-2,((endMin-startMin)/SLOT_MIN)*SLOT_PX-2);
+    const color=CAT_COLOR[b.category]||CAT_COLOR['기타'];
+    const bg=color+'33';
+    blocksHtml+=`<div class="block" style="top:${top}px;height:${height}px;border-left-color:${color};background:${bg};" draggable="true" data-id="${b.id}" ondragstart="onBlockDragStart(event,'${b.id}')" onclick="blockOpenEdit('${b.id}')">
+      <div class="block-handle top" onmousedown="onBlockResize(event,'${b.id}','top')"></div>
+      <div class="block-text">${escapeHtml(b.text)}</div>
+      <div class="block-time">${b.start} – ${b.end}</div>
+      <div class="block-handle bot" onmousedown="onBlockResize(event,'${b.id}','bot')"></div>
+    </div>`;
+  });
+
+  grid.innerHTML=rowsHtml+blocksHtml;
+  grid.style.height=(SLOT_COUNT*SLOT_PX)+'px';
+}
+
+// ── Drag handlers (HTML5 native drag) ──
+function onDragStart(ev,type,id){
+  dragData={type,id};
+  ev.dataTransfer.effectAllowed=(type==='block'?'move':'copy');
+  ev.dataTransfer.setData('text/plain',id);
+}
+function onBlockDragStart(ev,id){
+  dragData={type:'block',id};
+  ev.dataTransfer.effectAllowed='move';
+  ev.dataTransfer.setData('text/plain',id);
+  ev.currentTarget.classList.add('dragging');
+}
+function onSlotDragOver(ev){
+  if(!dragData)return;
+  ev.preventDefault();
+  ev.currentTarget.classList.add('drop-over');
+}
+function onSlotDragLeave(ev){ev.currentTarget.classList.remove('drop-over');}
+
+function onSlotDrop(ev,slot){
+  ev.preventDefault();
+  ev.currentTarget.classList.remove('drop-over');
+  if(!dragData){onGlobalDragEnd();return;}
+
+  const blocks=timeplanByDate[currentDate]||(timeplanByDate[currentDate]=[]);
+  const slotStartMin=HOUR_START*60+slot*SLOT_MIN;
+
+  if(dragData.type==='bd'){
+    const src=brainDump.find(b=>b.id===dragData.id);
+    if(src)blocks.push({id:uid(),start:minToTime(slotStartMin),end:minToTime(Math.min(slotStartMin+SLOT_MIN,HOUR_END*60)),text:src.name,category:src.category,sourceType:'brainDump'});
+  }else if(dragData.type==='dj'){
+    const src=dailyJob.items.find(i=>i.id===dragData.id);
+    if(src)blocks.push({id:uid(),start:minToTime(slotStartMin),end:minToTime(Math.min(slotStartMin+SLOT_MIN,HOUR_END*60)),text:src.text,category:'기타',sourceType:'dailyJob'});
+  }else if(dragData.type==='block'){
+    const blk=blocks.find(b=>b.id===dragData.id);
+    if(blk){
+      const dur=timeToMin(blk.end)-timeToMin(blk.start);
+      const ns=Math.max(HOUR_START*60,Math.min(HOUR_END*60-dur,slotStartMin));
+      blk.start=minToTime(ns);
+      blk.end=minToTime(ns+dur);
+    }
+  }
+  dragData=null;
+  saveTimeplan(currentDate);renderTimePlan();
+}
+
+function onGlobalDragEnd(){
+  document.querySelectorAll('.block.dragging').forEach(el=>el.classList.remove('dragging'));
+  document.querySelectorAll('.time-row.drop-over').forEach(el=>el.classList.remove('drop-over'));
+  dragData=null;
+}
+
+// ── Block resize (mouse-based, snap to 30-min) ──
+function onBlockResize(ev,id,which){
+  ev.stopPropagation();
+  ev.preventDefault();
+  const blocks=timeplanByDate[currentDate]||[];
+  const blk=blocks.find(b=>b.id===id);if(!blk)return;
+  const startY=ev.clientY;
+  const initStart=timeToMin(blk.start), initEnd=timeToMin(blk.end);
+  function onMove(e){
+    const dy=e.clientY-startY;
+    const dSlot=Math.round(dy/SLOT_PX);
+    const dMin=dSlot*SLOT_MIN;
+    if(which==='top'){
+      const ns=Math.max(HOUR_START*60,Math.min(initEnd-SLOT_MIN,initStart+dMin));
+      blk.start=minToTime(ns);
+    }else{
+      const ne=Math.max(initStart+SLOT_MIN,Math.min(HOUR_END*60,initEnd+dMin));
+      blk.end=minToTime(ne);
+    }
+    renderTimePlan();
+  }
+  function onUp(){
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
+    saveTimeplan(currentDate);
+  }
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+}
+
+// ── Block edit modal ──
+function blockOpenEdit(id){
+  const blocks=timeplanByDate[currentDate]||[];
+  const blk=blocks.find(b=>b.id===id);if(!blk)return;
+  editingBlockId=id;
+  document.getElementById('blockText').value=blk.text;
+  document.getElementById('blockStart').value=blk.start;
+  document.getElementById('blockEnd').value=blk.end;
+  document.getElementById('blockCategory').value=blk.category||'기타';
+  document.getElementById('blockModal').classList.add('active');
+}
+function blockClose(){document.getElementById('blockModal').classList.remove('active');}
+function blockSave(){
+  const blocks=timeplanByDate[currentDate]||[];
+  const blk=blocks.find(b=>b.id===editingBlockId);if(!blk)return;
+  const t=document.getElementById('blockText').value.trim();
+  const s=document.getElementById('blockStart').value;
+  const e=document.getElementById('blockEnd').value;
+  const c=document.getElementById('blockCategory').value;
+  if(!t||!s||!e)return;
+  const sm=Math.round(timeToMin(s)/SLOT_MIN)*SLOT_MIN;
+  const em=Math.round(timeToMin(e)/SLOT_MIN)*SLOT_MIN;
+  if(em<=sm)return;
+  blk.text=t;blk.category=c;blk.start=minToTime(sm);blk.end=minToTime(em);
+  saveTimeplan(currentDate);renderTimePlan();blockClose();
+}
+function blockDelete(){
+  timeplanByDate[currentDate]=(timeplanByDate[currentDate]||[]).filter(b=>b.id!==editingBlockId);
+  saveTimeplan(currentDate);renderTimePlan();blockClose();
+}
+
+// ── Master render ──
+function renderAll(){renderAuth();renderBookmarks();renderShortcuts();renderDailyJob();renderBrainDump();renderTimePlan();}
 
 // ── Init ──
 (async()=>{
+  // cache-first paint
+  const cDJ=cacheGet('dailyJob');if(cDJ)dailyJob=cDJ;
+  const cBD=cacheGet('brainDump');if(cBD)brainDump=cBD;
+  const cTP=cacheGet('tp:'+currentDate);if(cTP)timeplanByDate[currentDate]=cTP;
+  checkDailyJobReset();
   await Promise.all([fetchShortcuts(),fetchBookmarks()]);
-  renderBookmarks();renderShortcuts();
+  renderAll();
 })();
+
+// ── Periodic Daily Job reset check ──
+setInterval(()=>{
+  if(dailyJob.lastResetDate!==getPlannerDate()){
+    checkDailyJobReset();renderDailyJob();renderTimePlan();
+  }
+},60000);
 </script>
 </body>
 </html>

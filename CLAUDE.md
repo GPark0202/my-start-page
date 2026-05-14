@@ -4,33 +4,60 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Personal browser start page (new tab replacement). UI is Korean (`lang="ko"`).
+Personal browser start page (new tab replacement). UI is Korean (`lang="ko"`). Desktop-only — no mobile breakpoints, drag-and-drop assumes mouse.
 
 ## Architecture
 
-**Single-file app.** The entire project is one file: `index.html` (~26KB). HTML, CSS, and JavaScript are all inline. There is no build step, bundler, package manager, test suite, or framework.
+**Single-file app + 2 static JSON.** Entirety is `index.html` (~40KB inline HTML/CSS/JS) plus `data/shortcuts.json` and `data/bookmarks.json` fetched at load. No build, no bundler, no framework.
 
-**To run / preview:** open `index.html` directly in a browser, or serve the directory with any static server (e.g. `python -m http.server`). No install step.
+**Deploy target: GitHub Pages.** Page must be served over HTTP/HTTPS for `fetch()` to work — `file://` double-click does NOT work (CORS blocks fetching the JSON files; the page silently renders as empty).
 
-**To deploy a change:** edit `index.html`, commit, push. There is no CI.
+**To run locally:** `python -m http.server 8000` from the repo root, then `http://localhost:8000`. The OAuth Client's authorized origins must include the local origin (currently `http://localhost:8000`) and `https://lyb2106.github.io`.
 
-## State model
+## Two storage layers
 
-A single object — `{shortcuts, quests, todos, lastdate}` — is the source of truth. It is written to **both** `localStorage['hp_data']` **and** Firebase Realtime Database at `users/<uid>` on every mutation via `saveData()`.
+| Layer | Storage | Lifetime | Edited by |
+|---|---|---|---|
+| Static | `data/*.json` in git | Permanent in repo | Manual edit + commit |
+| Dynamic | Google Drive `appDataFolder` (per-user, hidden) + localStorage cache | Per-user | Page UI |
 
-- Logged out: localStorage only (`loadLocal()` on init).
-- Logged in: `dbRef.on('value', loadSnap)` subscribes to remote changes, which overwrite local state and trigger `renderAll()`. Remote is authoritative when signed in.
+**Static**: bookmark pills, shortcut grid. To change, edit the JSON, commit, push. No UI for editing — the right-click edit modal was removed.
 
-Every mutation function (`addQuest`, `completeQuest`, `addTodo`, `toggleTodo`, `deleteTodo`, `saveShortcutEdit`) must call `saveData()` then the relevant `render*()`. Don't mutate state without `saveData()` — the change will be lost on next snapshot.
+**Dynamic**: Daily Job, Brain Dump, Time Plan. Read/written via Drive REST API after Google login.
 
-Firebase config in the source is the standard web-side public config (apiKey, projectId, etc.) — it's not a secret and is safe to commit. Access control is enforced by Firebase Database Rules, not by hiding this config.
+Drive files (all in `appDataFolder` — invisible in user's Drive UI, app-private):
+- `dailyJob.json` — `{items:[{id,text,done}], lastResetDate}`. Resets at 06:00 KST (full clear, not just unchecking).
+- `brainDump.json` — `[{id, category, name, createdAt}]`. `createdAt` is immutable after creation.
+- `timeplan-YYYY-MM-DD.json` — `[{id, start, end, text, category, sourceType}]`. One file per day. `sourceType ∈ {'brainDump','dailyJob','manual'}` indicates origin of the block.
+
+## State → persistence → render flow
+
+Every mutation calls its save function (`saveDailyJob`, `saveBrainDump`, `saveTimeplan(date)`) then re-renders. Save = synchronous localStorage write (`cacheSet`) + 300ms-debounced Drive PUT (`scheduleSave` → `driveSave`). When logged out, Drive PUT is skipped; localStorage still updates.
+
+Load on init:
+1. `cacheGet` for `dailyJob`/`brainDump`/`tp:<currentDate>` → paint immediately (cache-first).
+2. If session token valid, `loadAllFromDrive()` fetches latest from Drive → may overwrite cache → re-render.
+
+When date changes via nav (prev/next/today/picker), `onDateChange()` paints from cache for that date, then `loadTimeplan(date)` syncs from Drive.
+
+## Auth
+
+Google Identity Services token client with scope `openid email profile https://www.googleapis.com/auth/drive.appdata`. Access token kept in `sessionStorage` (`drive_token`, `drive_token_expiry`, `drive_user`). On 401 from Drive, `refreshToken()` does one silent retry via `requestAccessToken({prompt:''})`.
+
+`CLIENT_ID` constant is the OAuth Web Client public ID — safe to commit because origin restriction (`https://lyb2106.github.io` + `http://localhost:8000`) enforces security. To rotate, regenerate in GCP project `my-start-page-a48c0` and update the constant.
+
+Logged-out state: page works read-only against localStorage cache. Edits still mutate cache but do not sync. On next login, Drive content **overwrites** local — local-only edits are lost.
 
 ## Conventions worth knowing
 
-- **KST timezone is hardcoded.** `getKSTDateString()` adds 9h offset and slices to `YYYY-MM-DD`. Any date logic (D-Day, daily todo reset) must go through this — don't use raw `new Date()` for date comparisons.
-- **Daily todo reset:** `checkReset(lastdate)` clears `done` flags when the KST date changes. A 60-second `setInterval` re-checks this so the page doesn't need a reload at midnight.
-- **Shortcut grid is 10 fixed slots**, not a dynamic list. `DEFAULT_SHORTCUTS` is the seed. Right-click on a shortcut opens the edit modal (`contextmenu` handler); there is no add/delete.
-- **`__CAL__` sentinel:** if a shortcut's `icon` field equals the string `'__CAL__'`, `calIcon()` generates a live canvas favicon showing today's date number. Preserve this when touching `renderShortcuts()`.
-- **Favicons** come from `https://www.google.com/s2/favicons?domain=<host>&sz=64`. New shortcuts auto-derive this from the URL hostname in `saveShortcutEdit()`.
-- **XSS:** any user-entered string rendered inside `innerHTML` (quest text, todo text) must go through `escapeHtml()`. Static template strings don't need it.
-- **Quest sort order:** priority ascending (P1 first), then due date ascending, nulls last. Applied in `renderQuests()` — do not pre-sort the stored array.
+- **"Today" rolls over at 06:00 KST**, not midnight. `getPlannerDate()` returns the active planner day; Daily Job reset and `tpToday()` both use this. Don't use raw `new Date()` or `getKSTDateString` (removed) for planner-day comparisons.
+- **Time grid:** 06:00 – 24:00, 30-min slots → 36 rows × 30px. Block layout: `top = (startMin - 360) / 30 × 30px`, `height = (endMin - startMin) / 30 × 30px`. Constants in code: `SLOT_MIN=30`, `SLOT_PX=30`, `HOUR_START=6`, `HOUR_END=24`, `SLOT_COUNT=36`.
+- **`__CAL__` sentinel:** if a shortcut's `icon` field equals the string `'__CAL__'`, `calIcon()` generates a live canvas favicon showing today's calendar date number. Preserve this when touching `renderShortcuts()`.
+- **Favicons** in `shortcuts.json` use `https://www.google.com/s2/favicons?domain=<host>&sz=64` — set manually when adding a shortcut.
+- **XSS:** any user-entered string rendered via `innerHTML` (Daily Job text, Brain Dump name, block text) must go through `escapeHtml()`. Static template strings and OAuth-provided fields (user name, picture URL) are trusted.
+- **Drag-and-drop copies, never moves the source.** Dragging Brain Dump or Daily Job item into Time Plan creates a new block with `sourceType` set; the source is untouched. No reverse drag (Time Plan → panel).
+- **Block resize and drop snap to 30-min grid.** `Math.round(deltaY / SLOT_PX)`; never sub-slot precision.
+- **Brain Dump's `createdAt` is immutable.** `bdSave` only writes `name` and `category` on edit — never overwrites `createdAt`.
+- **Block overlap is allowed** but renders stacked (later block on top by z-index, hover raises). No side-by-side cluster layout.
+- **`id` generation:** `uid()` = `Date.now().toString(36) + 6 random chars`. Avoids the collision risk of plain `Date.now()` in fast successive adds.
+- **Shortcuts/bookmarks length is not enforced.** `shortcuts.json` may contain any number; UI just renders what's there. The original "10 fixed slots" rule was dropped along with the edit modal.

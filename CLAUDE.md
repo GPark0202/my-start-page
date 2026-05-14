@@ -55,7 +55,7 @@ Logged-out state: page works read-only against localStorage cache. Edits still m
 - **`__CAL__` sentinel:** if a shortcut's `icon` field equals the string `'__CAL__'`, `calIcon()` generates a live canvas favicon showing today's calendar date number. Preserve this when touching `renderShortcuts()`.
 - **Favicons** in `shortcuts.json` use `https://www.google.com/s2/favicons?domain=<host>&sz=64` — set manually when adding a shortcut.
 - **XSS:** any user-entered string rendered via `innerHTML` (Daily Job text, Brain Dump name, block text) must go through `escapeHtml()`. Static template strings and OAuth-provided fields (user name, picture URL) are trusted.
-- **Drag-and-drop copies, never moves the source.** Dragging Brain Dump or Daily Job item into Time Plan creates a new block with `sourceType` set; the source is untouched. No reverse drag (Time Plan → panel).
+- **Drag-and-drop moves the source.** Dragging Brain Dump or Daily Job item into Time Plan creates a new block AND deletes the source from its panel in a single action (`saveBrainDump`/`saveDailyJob` fire alongside `saveTimeplan`). `sourceType` field records origin but is informational only — the source no longer exists in the panel. No reverse drag (Time Plan → panel).
 - **Block resize and drop snap to 30-min grid.** `Math.round(deltaY / SLOT_PX)`; never sub-slot precision.
 - **Brain Dump's `createdAt` is immutable.** `bdSave` only writes `name` and `category` on edit — never overwrites `createdAt`.
 - **Block overlap is allowed** but renders stacked (later block on top by z-index, hover raises). No side-by-side cluster layout.

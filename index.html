@@ -135,8 +135,9 @@
   .block{position:absolute;left:6px;right:6px;padding:6px 10px;border-radius:var(--radius-sm);border-left:3px solid var(--text-muted);background:var(--bg-tertiary);cursor:grab;overflow:hidden;z-index:1;box-shadow:0 2px 6px var(--shadow);user-select:none;}
   .block:hover{filter:brightness(1.15);z-index:2;}
   .block.dragging{opacity:.4;}
-  .block-text{font-size:12px;color:var(--text-primary);line-height:1.3;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;font-weight:500;}
-  .block-time{font-size:10px;color:var(--text-secondary);margin-top:2px;}
+  .block-row{display:flex;align-items:flex-start;gap:8px;height:100%;}
+  .block-text{flex:1;min-width:0;font-size:12px;color:var(--text-primary);line-height:1.3;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;font-weight:500;}
+  .block-time{flex-shrink:0;font-size:10px;color:var(--text-secondary);}
   .block-handle{position:absolute;left:0;right:0;height:6px;cursor:ns-resize;background:transparent;z-index:3;}
   .block-handle.top{top:-3px;}
   .block-handle.bot{bottom:-3px;}
@@ -201,6 +202,7 @@
     <label>분류</label>
     <select id="bdCategory">
       <option value="피치">피치</option>
+      <option value="BCI">BCI</option>
       <option value="타이탄">타이탄</option>
       <option value="오로라">오로라</option>
       <option value="개인플젝">개인플젝</option>
@@ -234,6 +236,7 @@
     <label>분류</label>
     <select id="blockCategory">
       <option value="피치">피치</option>
+      <option value="BCI">BCI</option>
       <option value="타이탄">타이탄</option>
       <option value="오로라">오로라</option>
       <option value="개인플젝">개인플젝</option>
@@ -252,7 +255,7 @@
 // ── Config ──
 const CLIENT_ID='676989045728-c3bavcs39ppmvvekb92lbnmssrs66bkj.apps.googleusercontent.com';
 const SCOPES='openid email profile https://www.googleapis.com/auth/drive.appdata';
-const CAT_COLOR={'피치':'#f28b82','타이탄':'#fdd663','오로라':'#81c995','개인플젝':'#8ab4f8','기타':'#9aa0a6'};
+const CAT_COLOR={'피치':'#f28b82','BCI':'#fdd663','타이탄':'#a8b8c4','오로라':'#81c995','개인플젝':'#8ab4f8','기타':'#9aa0a6'};
 const SLOT_MIN=30, SLOT_PX=30, HOUR_START=6, HOUR_END=24;
 const SLOT_COUNT=(HOUR_END-HOUR_START)*60/SLOT_MIN;   // 36
 
@@ -631,8 +634,10 @@ function renderTimePlan(){
     const bg=color+'33';
     blocksHtml+=`<div class="block" style="top:${top}px;height:${height}px;border-left-color:${color};background:${bg};" draggable="true" data-id="${b.id}" ondragstart="onBlockDragStart(event,'${b.id}')" onclick="blockOpenEdit('${b.id}')">
       <div class="block-handle top" onmousedown="onBlockResize(event,'${b.id}','top')"></div>
-      <div class="block-text">${escapeHtml(b.text)}</div>
-      <div class="block-time">${b.start} – ${b.end}</div>
+      <div class="block-row">
+        <div class="block-text">${escapeHtml(b.text)}</div>
+        <div class="block-time">${b.start} – ${b.end}</div>
+      </div>
       <div class="block-handle bot" onmousedown="onBlockResize(event,'${b.id}','bot')"></div>
     </div>`;
   });
@@ -644,7 +649,7 @@ function renderTimePlan(){
 // ── Drag handlers (HTML5 native drag) ──
 function onDragStart(ev,type,id){
   dragData={type,id};
-  ev.dataTransfer.effectAllowed=(type==='block'?'move':'copy');
+  ev.dataTransfer.effectAllowed='move';
   ev.dataTransfer.setData('text/plain',id);
 }
 function onBlockDragStart(ev,id){
@@ -670,10 +675,18 @@ function onSlotDrop(ev,slot){
 
   if(dragData.type==='bd'){
     const src=brainDump.find(b=>b.id===dragData.id);
-    if(src)blocks.push({id:uid(),start:minToTime(slotStartMin),end:minToTime(Math.min(slotStartMin+SLOT_MIN,HOUR_END*60)),text:src.name,category:src.category,sourceType:'brainDump'});
+    if(src){
+      blocks.push({id:uid(),start:minToTime(slotStartMin),end:minToTime(Math.min(slotStartMin+2*SLOT_MIN,HOUR_END*60)),text:src.name,category:src.category,sourceType:'brainDump'});
+      brainDump=brainDump.filter(b=>b.id!==dragData.id);
+      saveBrainDump();renderBrainDump();
+    }
   }else if(dragData.type==='dj'){
     const src=dailyJob.items.find(i=>i.id===dragData.id);
-    if(src)blocks.push({id:uid(),start:minToTime(slotStartMin),end:minToTime(Math.min(slotStartMin+SLOT_MIN,HOUR_END*60)),text:src.text,category:'기타',sourceType:'dailyJob'});
+    if(src){
+      blocks.push({id:uid(),start:minToTime(slotStartMin),end:minToTime(Math.min(slotStartMin+2*SLOT_MIN,HOUR_END*60)),text:src.text,category:'기타',sourceType:'dailyJob'});
+      dailyJob.items=dailyJob.items.filter(i=>i.id!==dragData.id);
+      saveDailyJob();renderDailyJob();
+    }
   }else if(dragData.type==='block'){
     const blk=blocks.find(b=>b.id===dragData.id);
     if(blk){

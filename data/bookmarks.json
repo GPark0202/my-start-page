@@ -1,0 +1,7 @@
+[
+  { "emoji": "❇️",  "name": "Gemini",         "url": "https://gemini.google.com" },
+  { "emoji": "🌟",  "name": "Claude",         "url": "https://claude.ai" },
+  { "emoji": "🖥️",  "name": "GCP",            "url": "https://console.cloud.google.com/welcome?project=my-start-page-a48c0" },
+  { "emoji": "📝",  "name": "Overleaf-LaTeX", "url": "https://www.overleaf.com" },
+  { "emoji": "🐱",  "name": "GitHub",         "url": "https://github.com" }
+]

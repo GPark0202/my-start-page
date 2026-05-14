@@ -271,18 +271,21 @@ let userProfile=null, editingBrainId=null, editingBlockId=null, dragData=null;
 let tokenClient=null, accessToken=null, tokenExpiry=0;
 function isTokenValid(){return !!accessToken && Date.now()<tokenExpiry-60000;}
 
-function onGsiLoad(){
+async function onGsiLoad(){
   tokenClient=google.accounts.oauth2.initTokenClient({
     client_id:CLIENT_ID, scope:SCOPES, prompt:'',
     callback:onTokenResponse
   });
-  const t=sessionStorage.getItem('drive_token'),
-        e=parseInt(sessionStorage.getItem('drive_token_expiry')||'0'),
-        p=sessionStorage.getItem('drive_user');
+  const t=localStorage.getItem('drive_token'),
+        e=parseInt(localStorage.getItem('drive_token_expiry')||'0'),
+        p=localStorage.getItem('drive_user');
+  if(p){try{userProfile=JSON.parse(p);}catch(_){}}
   if(t && Date.now()<e-60000){
     accessToken=t; tokenExpiry=e;
-    if(p){try{userProfile=JSON.parse(p);}catch(_){}}
     renderAuth(); loadAllFromDrive();
+  }else if(p){
+    renderAuth();
+    if(await refreshToken()){renderAuth(); loadAllFromDrive();}
   }else{
     renderAuth();
   }
@@ -292,8 +295,8 @@ function onTokenResponse(r){
   if(r && r.access_token){
     accessToken=r.access_token;
     tokenExpiry=Date.now()+(r.expires_in||3600)*1000;
-    sessionStorage.setItem('drive_token',accessToken);
-    sessionStorage.setItem('drive_token_expiry',tokenExpiry+'');
+    localStorage.setItem('drive_token',accessToken);
+    localStorage.setItem('drive_token_expiry',tokenExpiry+'');
     fetchUserProfile().then(()=>{renderAuth(); loadAllFromDrive();});
   }else{
     console.error('token response failed',r);
@@ -307,7 +310,7 @@ async function fetchUserProfile(){
     if(!r.ok)return;
     const d=await r.json();
     userProfile={email:d.email,name:d.name,picture:d.picture};
-    sessionStorage.setItem('drive_user',JSON.stringify(userProfile));
+    localStorage.setItem('drive_user',JSON.stringify(userProfile));
   }catch(e){console.error('userinfo failed',e);}
 }
 
@@ -319,9 +322,9 @@ function doLogin(){
 function doLogout(){
   if(accessToken)try{google.accounts.oauth2.revoke(accessToken,()=>{});}catch(_){}
   accessToken=null; tokenExpiry=0; userProfile=null;
-  sessionStorage.removeItem('drive_token');
-  sessionStorage.removeItem('drive_token_expiry');
-  sessionStorage.removeItem('drive_user');
+  localStorage.removeItem('drive_token');
+  localStorage.removeItem('drive_token_expiry');
+  localStorage.removeItem('drive_user');
   renderAuth();
 }
 
@@ -407,8 +410,8 @@ function refreshToken(){
       if(tr && tr.access_token){
         accessToken=tr.access_token;
         tokenExpiry=Date.now()+(tr.expires_in||3600)*1000;
-        sessionStorage.setItem('drive_token',accessToken);
-        sessionStorage.setItem('drive_token_expiry',tokenExpiry+'');
+        localStorage.setItem('drive_token',accessToken);
+        localStorage.setItem('drive_token_expiry',tokenExpiry+'');
         res(true);
       }else res(false);
     };

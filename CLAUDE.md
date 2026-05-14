@@ -42,7 +42,7 @@ When date changes via nav (prev/next/today/picker), `onDateChange()` paints from
 
 ## Auth
 
-Google Identity Services token client with scope `openid email profile https://www.googleapis.com/auth/drive.appdata`. Access token kept in `sessionStorage` (`drive_token`, `drive_token_expiry`, `drive_user`). On 401 from Drive, `refreshToken()` does one silent retry via `requestAccessToken({prompt:''})`.
+Google Identity Services token client with scope `openid email profile https://www.googleapis.com/auth/drive.appdata`. Access token kept in `localStorage` (`drive_token`, `drive_token_expiry`, `drive_user`) so a single login persists across tabs and browser restarts. On 401 from Drive, `refreshToken()` does one silent retry via `requestAccessToken({prompt:''})`. On page load, if a stored `drive_user` exists but the token is missing/expired, `onGsiLoad` runs the same silent refresh before showing the login button — so a returning user auto-reconnects without UI.
 
 `CLIENT_ID` constant is the OAuth Web Client public ID — safe to commit because origin restriction (`https://lyb2106.github.io` + `http://localhost:8000`) enforces security. To rotate, regenerate in GCP project `my-start-page-a48c0` and update the constant.
 

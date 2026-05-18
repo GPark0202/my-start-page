@@ -143,8 +143,8 @@
   .block-handle.bot{bottom:-3px;}
 
   /* Docs entry buttons */
-  .docs-bar{display:flex;gap:16px;justify-content:center;width:100%;max-width:1100px;padding:0 16px;margin-bottom:32px;}
-  .docs-btn{flex:1;max-width:320px;padding:16px 20px;background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:var(--radius);color:var(--text-primary);font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s;}
+  .docs-bar{display:flex;gap:10px;justify-content:center;width:100%;max-width:1100px;padding:0 16px;margin-bottom:20px;}
+  .docs-btn{flex:1;max-width:220px;padding:8px 14px;background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);color:var(--text-primary);font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s;}
   .docs-btn:hover{background:var(--bg-tertiary);border-color:var(--accent);color:var(--accent);}
 
   /* Docs picker / list */
@@ -162,6 +162,9 @@
   .docs-editor-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--bg-tertiary);background:var(--bg-secondary);flex-shrink:0;}
   .docs-editor-title{flex:1;height:36px;background:var(--bg-primary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);padding:0 12px;color:var(--text-primary);font-size:15px;font-weight:600;font-family:inherit;outline:none;}
   .docs-editor-title:focus{border-color:var(--accent);}
+  .docs-editor-cat{height:36px;background:var(--bg-primary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);padding:0 10px;color:var(--text-primary);font-size:13px;font-family:inherit;outline:none;cursor:pointer;flex-shrink:0;}
+  .docs-editor-cat:focus{border-color:var(--accent);}
+  .docs-editor-cat option{background:var(--bg-primary);color:var(--text-primary);}
   .docs-editor-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;}
   .docs-editor-actions .btn-save{padding:8px 18px;border:none;border-radius:var(--radius-sm);font-size:13px;font-family:inherit;cursor:pointer;background:var(--accent);color:#202124;font-weight:600;transition:background .15s;}
   .docs-editor-actions .btn-save:hover{background:var(--accent-hover);}
@@ -174,13 +177,18 @@
   .docs-editor-body::-webkit-scrollbar-thumb{background:var(--bg-tertiary);border-radius:4px;}
   .docs-section{margin-bottom:18px;}
   .docs-section-q{display:block;font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;}
-  .docs-section-a{width:100%;min-height:90px;background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);padding:10px 12px;color:var(--text-primary);font-size:13px;line-height:1.55;font-family:inherit;outline:none;resize:vertical;}
+  .docs-section-a{width:100%;min-height:180px;background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);padding:10px 12px;color:var(--text-primary);font-size:13px;line-height:1.55;font-family:inherit;outline:none;resize:vertical;}
   .docs-section-a:focus{border-color:var(--accent);}
   .docs-section-a.has-hint{color:var(--text-muted);font-style:italic;}
 
   /* Docs list rows */
-  .docs-list-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg-primary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;transition:all .15s;}
+  .docs-list-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg-primary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;transition:all .15s;}
   .docs-list-row:hover{background:var(--bg-tertiary);border-color:var(--accent);}
+  .docs-list-fav{width:26px;height:26px;background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:18px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:color .15s, transform .1s;}
+  .docs-list-fav:hover{transform:scale(1.18);color:var(--warning);}
+  .docs-list-fav.active{color:var(--warning);}
+  .docs-list-section-title{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;margin:10px 2px 6px;font-weight:600;}
+  .docs-list-section-title:first-child{margin-top:0;}
   .docs-list-info{flex:1;min-width:0;}
   .docs-list-title{font-size:14px;color:var(--text-primary);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .docs-list-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
@@ -319,6 +327,14 @@
   <div class="docs-editor">
     <div class="docs-editor-head">
       <input type="text" id="docsEditorTitle" class="docs-editor-title" placeholder="제목을 입력하세요..." autocomplete="off">
+      <select id="docsEditorCat" class="docs-editor-cat" title="분류">
+        <option value="피치">피치</option>
+        <option value="BCI">BCI</option>
+        <option value="타이탄">타이탄</option>
+        <option value="오로라">오로라</option>
+        <option value="개인">개인</option>
+        <option value="기타" selected>기타</option>
+      </select>
       <div class="docs-editor-actions">
         <button class="btn-save" onclick="docsEditorSave()">저장</button>
         <button class="docs-editor-close" onclick="docsEditorClose()" title="닫기">×</button>
@@ -887,14 +903,16 @@ function docsPick(id){
     templateId:t.id,
     docId:null,
     title:'',
+    category:'기타',
     sections:(t.sections||[]).map(s=>({q:s.q,hint:s.hint||'',a:s.hint||''}))
   });
 }
 
 // ── Editor ──
 function docsEditorOpen(state){
-  editorState={dirty:false,createdAt:null,...state};
+  editorState={dirty:false,createdAt:null,category:'기타',favorite:false,...state};
   document.getElementById('docsEditorTitle').value=editorState.title||'';
+  document.getElementById('docsEditorCat').value=editorState.category||'기타';
   const tpl=templates.find(t=>t.id===editorState.templateId);
   document.getElementById('docsEditorMeta').textContent=
     (tpl?tpl.label:'')
@@ -906,6 +924,11 @@ function docsEditorOpen(state){
     editorState.dirty=true;
     docsScheduleDraft();
   };
+  document.getElementById('docsEditorCat').onchange=(e)=>{
+    editorState.category=e.target.value;
+    editorState.dirty=true;
+    docsScheduleDraft();
+  };
   if(!editorState.docId)docsTryRestoreDraft();
 }
 function docsRenderEditorBody(){
@@ -914,7 +937,7 @@ function docsRenderEditorBody(){
     const isHint=s.a===s.hint && s.hint!=='';
     return `<div class="docs-section">`
       +`<label class="docs-section-q">${escapeHtml(s.q)}</label>`
-      +`<textarea class="docs-section-a${isHint?' has-hint':''}" data-idx="${i}" oninput="docsOnSectionInput(this)" rows="4">${escapeHtml(s.a)}</textarea>`
+      +`<textarea class="docs-section-a${isHint?' has-hint':''}" data-idx="${i}" oninput="docsOnSectionInput(this)" rows="8">${escapeHtml(s.a)}</textarea>`
       +`</div>`;
   }).join('');
 }
@@ -950,6 +973,8 @@ async function docsEditorSave(){
     id:editorState.docId||uid(),
     templateId:editorState.templateId,
     title:editorState.title,
+    category:editorState.category||'기타',
+    favorite:!!editorState.favorite,
     createdAt:editorState.createdAt||now,
     updatedAt:now,
     sections:editorState.sections.map(s=>({q:s.q,a:s.a}))
@@ -988,6 +1013,7 @@ function docsTryRestoreDraft(){
   if(!confirm('저장하지 않은 작성 중 문서가 있습니다. 복구하시겠습니까?')){docsClearDraft();return;}
   editorState={...d,dirty:true};
   document.getElementById('docsEditorTitle').value=editorState.title||'';
+  document.getElementById('docsEditorCat').value=editorState.category||'기타';
   docsRenderEditorBody();
 }
 
@@ -1028,22 +1054,53 @@ function docsRenderList(){
   }
   content.className='';
   const sorted=[...docList].sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));
-  content.innerHTML=sorted.map(d=>{
-    const tpl=templates.find(t=>t.id===d.templateId);
-    const tplLabel=tpl?tpl.label:(d.templateId||'');
-    const upd=d.updatedAt?d.updatedAt.slice(0,16).replace('T',' '):'';
-    return `<div class="docs-list-row" ondblclick="docsListOpen('${escapeHtml(d.id)}')" title="더블클릭하여 열기">`
-      +`<div class="docs-list-info">`
-        +`<div class="docs-list-title">${escapeHtml(d.title||'(제목 없음)')}</div>`
-        +`<div class="docs-list-meta">${escapeHtml(tplLabel)} · ${upd}</div>`
-      +`</div>`
-      +`<div class="docs-list-actions">`
-        +`<button onclick="event.stopPropagation();docsListDownload('${escapeHtml(d.id)}','md')">.md</button>`
-        +`<button onclick="event.stopPropagation();docsListDownload('${escapeHtml(d.id)}','txt')">.txt</button>`
-        +`<button class="docs-list-del" onclick="event.stopPropagation();docsListDelete('${escapeHtml(d.id)}')">삭제</button>`
-      +`</div>`
-    +`</div>`;
-  }).join('');
+  const favs=sorted.filter(d=>d.favorite);
+  const rest=sorted.filter(d=>!d.favorite);
+  let html='';
+  if(favs.length){
+    html+=`<div class="docs-list-section-title">★ 즐겨찾는 문서</div>`;
+    html+=favs.map(docsRenderRow).join('');
+  }
+  if(rest.length){
+    if(favs.length)html+=`<div class="docs-list-section-title">전체 문서</div>`;
+    html+=rest.map(docsRenderRow).join('');
+  }
+  content.innerHTML=html;
+}
+function docsRenderRow(d){
+  const tpl=templates.find(t=>t.id===d.templateId);
+  const tplLabel=tpl?tpl.label:(d.templateId||'');
+  const upd=d.updatedAt?d.updatedAt.slice(0,16).replace('T',' '):'';
+  const cat=d.category||'기타';
+  const fav=!!d.favorite;
+  const star=fav?'★':'☆';
+  return `<div class="docs-list-row" ondblclick="docsListOpen('${escapeHtml(d.id)}')" title="더블클릭하여 열기">`
+    +`<button class="docs-list-fav${fav?' active':''}" onclick="event.stopPropagation();docsToggleFav('${escapeHtml(d.id)}')" title="${fav?'즐겨찾기 해제':'즐겨찾기 추가'}">${star}</button>`
+    +`<div class="docs-list-info">`
+      +`<div class="docs-list-title">${escapeHtml(d.title||'(제목 없음)')}</div>`
+      +`<div class="docs-list-meta">${escapeHtml(tplLabel)} · ${escapeHtml(cat)} · ${upd}</div>`
+    +`</div>`
+    +`<div class="docs-list-actions">`
+      +`<button onclick="event.stopPropagation();docsListDownload('${escapeHtml(d.id)}','md')">.md</button>`
+      +`<button onclick="event.stopPropagation();docsListDownload('${escapeHtml(d.id)}','txt')">.txt</button>`
+      +`<button class="docs-list-del" onclick="event.stopPropagation();docsListDelete('${escapeHtml(d.id)}')">삭제</button>`
+    +`</div>`
+  +`</div>`;
+}
+async function docsToggleFav(id){
+  const d=docList.find(x=>x.id===id);
+  if(!d)return;
+  if(!isTokenValid()){alert('Google 로그인이 필요합니다.');return;}
+  const prev=!!d.favorite;
+  d.favorite=!prev;
+  docsRenderList();
+  const {_driveId,...persist}=d;
+  const ok=await docsSaveToDrive(`doc-${d.id}.json`,persist);
+  if(!ok){
+    d.favorite=prev;
+    docsRenderList();
+    alert('즐겨찾기 변경 저장에 실패했습니다.');
+  }
 }
 function docsListOpen(id){
   const d=docList.find(x=>x.id===id);
@@ -1060,6 +1117,8 @@ function docsListOpen(id){
     templateId:d.templateId,
     docId:d.id,
     title:d.title||'',
+    category:d.category||'기타',
+    favorite:!!d.favorite,
     createdAt:d.createdAt,
     updatedAt:d.updatedAt,
     sections

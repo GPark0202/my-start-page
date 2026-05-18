@@ -3,14 +3,22 @@
     "id": "product_dev",
     "label": "신규 제품(서비스) 개발 마스터플랜",
     "sections": [
-      { "q": "TODO: 질문을 추가하세요", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" }
+      { "q": "TODO: 질문을 추가하세요", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" },
+      { "q": "Q2 test", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" },
+      { "q": "Q3 test: 질문을 추가하세요", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" }
     ]
   },
   {
     "id": "rnd_grant",
     "label": "R&D 과제 지원서 마스터플랜",
     "sections": [
-      { "q": "TODO: 질문을 추가하세요", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" }
+      { "q": "TODO: 질문을 추가하세요", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" },
+      { "q": "Q1", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" },
+      { "q": "q2", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" },
+      { "q": "q3", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" },
+      { "q": "q4", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" },
+      { "q": "q5", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" },
+      { "q": "q6", "hint": "여기에 답변 요령 또는 팁을 작성하세요. (data/templates.json 직접 편집)" }
     ]
   },
   {

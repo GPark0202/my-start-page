@@ -197,8 +197,10 @@
   .pc-name-sub.green{color:var(--success);}
   .pc-name-sub.yellow{color:var(--warning);}
   .pc-name-sub.red{color:var(--danger);}
-  .pc-bar-track{flex:1;height:18px;background:var(--bg-primary);border-radius:9px;overflow:hidden;box-shadow:inset 2px 2px 5px rgba(0,0,0,0.45),inset -1px -1px 2px rgba(255,255,255,0.03);position:relative;}
-  .pc-bar-track::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:2;background-image:repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px);background-size:1px 100%;background-repeat:no-repeat;background-position:0 0,20% 0,40% 0,60% 0,80% 0,calc(100% - 1px) 0;}
+  .pc-bar-col{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;}
+  .pc-current-step{font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.2;}
+  .pc-bar-track{width:100%;height:18px;background:var(--bg-primary);border-radius:9px;overflow:hidden;box-shadow:inset 2px 2px 5px rgba(0,0,0,0.45),inset -1px -1px 2px rgba(255,255,255,0.03);position:relative;}
+  .pc-bar-track::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:2;background-image:repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px);background-size:1px 100%;background-repeat:no-repeat;background-position:20% 0,40% 0,60% 0,80% 0;}
   .pc-bar-fill{height:100%;border-radius:9px;transition:width .4s ease;}
   .pc-bar-fill.green{background:linear-gradient(135deg,#81c995,#5da97a);box-shadow:0 0 8px rgba(129,201,149,0.28);}
   .pc-bar-fill.yellow{background:linear-gradient(135deg,#fdd663,#d4af3e);box-shadow:0 0 8px rgba(253,214,99,0.28);}
@@ -1015,12 +1017,17 @@ function renderProjects(){
     const s=pcStatus(p);
     const pctTxt=pcFmtPct(s.pct);
     const dday=pcDDay(p.dueDate);
+    const next=(p.tasks||[]).find(t=>!t.done);
+    const step=next?`현재단계 - ${escapeHtml(next.text)}`:`현재단계 - 완료`;
     return `<div class="pc-row" onclick="pcOpenEdit('${escapeHtml(p.id)}')" title="${escapeHtml(p.name)} (${pctTxt} / ${dday})">`
       +`<div class="pc-name-col">`
         +`<div class="pc-name">${escapeHtml(p.name)}</div>`
         +`<div class="pc-name-sub ${s.color}">${escapeHtml(dday)}</div>`
       +`</div>`
-      +`<div class="pc-bar-track"><div class="pc-bar-fill ${s.color}" style="width:${s.pct}%"></div></div>`
+      +`<div class="pc-bar-col">`
+        +`<div class="pc-current-step">${step}</div>`
+        +`<div class="pc-bar-track"><div class="pc-bar-fill ${s.color}" style="width:${s.pct}%"></div></div>`
+      +`</div>`
       +`<div class="pc-pct ${s.color}">${pctTxt}</div>`
     +`</div>`;
   }).join('');

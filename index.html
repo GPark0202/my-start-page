@@ -181,6 +181,53 @@
   .docs-section-a:focus{border-color:var(--accent);}
   .docs-section-a.has-hint{color:var(--text-muted);font-style:italic;}
 
+  /* Project Chart */
+  .pc-section{width:100%;max-width:1100px;padding:0 16px;margin-bottom:28px;}
+  .pc-section-inner{background:var(--bg-secondary);border-radius:var(--radius);padding:18px 22px;box-shadow:3px 3px 10px rgba(0,0,0,0.35),-1px -1px 4px rgba(255,255,255,0.02);}
+  .pc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .pc-title{font-size:14px;font-weight:600;color:var(--text-primary);}
+  .pc-add-btn{padding:6px 12px;background:var(--accent-dim);color:var(--accent);border:1px solid rgba(138,180,248,0.25);border-radius:14px;font-size:11px;font-family:inherit;cursor:pointer;transition:all .15s;}
+  .pc-add-btn:hover{background:var(--accent);color:#202124;border-color:var(--accent);}
+  .pc-list{display:flex;flex-direction:column;gap:4px;}
+  .pc-row{display:flex;align-items:center;gap:14px;padding:8px 6px;cursor:pointer;border-radius:var(--radius-sm);transition:background .15s;}
+  .pc-row:hover{background:rgba(255,255,255,0.035);}
+  .pc-name-col{flex-shrink:0;width:140px;min-width:0;}
+  .pc-name{font-size:13px;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;}
+  .pc-name-sub{font-size:10px;margin-top:2px;font-family:'Outfit',monospace;letter-spacing:0.3px;}
+  .pc-name-sub.green{color:var(--success);}
+  .pc-name-sub.yellow{color:var(--warning);}
+  .pc-name-sub.red{color:var(--danger);}
+  .pc-bar-track{flex:1;height:18px;background:var(--bg-primary);border-radius:9px;overflow:hidden;box-shadow:inset 2px 2px 5px rgba(0,0,0,0.45),inset -1px -1px 2px rgba(255,255,255,0.03);position:relative;}
+  .pc-bar-track::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:2;background-image:repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px),repeating-linear-gradient(to bottom,rgba(255,255,255,0.38) 0 2px,transparent 2px 4px);background-size:1px 100%;background-repeat:no-repeat;background-position:0 0,20% 0,40% 0,60% 0,80% 0,calc(100% - 1px) 0;}
+  .pc-bar-fill{height:100%;border-radius:9px;transition:width .4s ease;}
+  .pc-bar-fill.green{background:linear-gradient(135deg,#81c995,#5da97a);box-shadow:0 0 8px rgba(129,201,149,0.28);}
+  .pc-bar-fill.yellow{background:linear-gradient(135deg,#fdd663,#d4af3e);box-shadow:0 0 8px rgba(253,214,99,0.28);}
+  .pc-bar-fill.red{background:linear-gradient(135deg,#f28b82,#c46962);box-shadow:0 0 8px rgba(242,139,130,0.28);}
+  .pc-pct{flex-shrink:0;width:56px;text-align:right;font-size:13px;font-weight:600;font-family:'Outfit',monospace;}
+  .pc-pct.green{color:var(--success);}
+  .pc-pct.yellow{color:var(--warning);}
+  .pc-pct.red{color:var(--danger);}
+  .pc-empty{text-align:center;color:var(--text-muted);font-size:12px;padding:18px 0;}
+
+  /* Project Chart modal */
+  .modal.pc-modal{width:520px;max-height:90vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg-tertiary) transparent;}
+  .modal.pc-modal::-webkit-scrollbar{width:5px;}
+  .modal.pc-modal::-webkit-scrollbar-thumb{background:var(--bg-tertiary);border-radius:4px;}
+  .pc-modal textarea{width:100%;background:var(--bg-primary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);padding:8px 12px;color:var(--text-primary);font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:60px;margin-bottom:14px;}
+  .pc-modal textarea:focus{border-color:var(--accent);}
+  .pc-task-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .pc-task-row .pc-task-check{width:18px;height:18px;flex-shrink:0;accent-color:var(--success);margin:0;cursor:pointer;}
+  .pc-task-row .pc-task-text{flex:1;height:34px;margin:0;}
+  .pc-task-row .pc-task-text.done{text-decoration:line-through;color:var(--text-muted);}
+  .pc-task-row .pc-task-del{width:28px;height:28px;background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;font-family:inherit;}
+  .pc-task-row .pc-task-del:hover{background:var(--danger-dim);color:var(--danger);}
+  #pcTaskAddBtn{width:100%;padding:8px;background:var(--accent-dim);border:1px dashed rgba(138,180,248,0.3);border-radius:var(--radius-sm);color:var(--accent);font-size:12px;font-family:inherit;cursor:pointer;margin:4px 0 14px;transition:all .15s;}
+  #pcTaskAddBtn:hover{background:var(--accent);color:#202124;border-style:solid;}
+  .pc-due-chips{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+  .pc-due-chips button{padding:5px 12px;background:var(--bg-primary);border:1px solid var(--bg-tertiary);border-radius:14px;color:var(--text-secondary);font-size:11px;font-family:inherit;cursor:pointer;transition:all .15s;}
+  .pc-due-chips button:hover{border-color:var(--accent);color:var(--accent);}
+  .pc-due-chips button.active{background:var(--accent);color:#202124;border-color:var(--accent);font-weight:600;}
+
   /* Docs list rows */
   .docs-list-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg-primary);border:1px solid var(--bg-tertiary);border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;transition:all .15s;}
   .docs-list-row:hover{background:var(--bg-tertiary);border-color:var(--accent);}
@@ -217,6 +264,16 @@
   <button class="docs-btn" onclick="docsOpenNew()">새 글…</button>
   <button class="docs-btn" onclick="docsOpenList()">나의 프로젝트 문서</button>
 </div>
+
+<section class="pc-section">
+  <div class="pc-section-inner">
+    <div class="pc-head">
+      <div class="pc-title">프로젝트 진행률</div>
+      <button class="pc-add-btn" onclick="pcOpenAdd()">+ 새 프로젝트</button>
+    </div>
+    <div class="pc-list" id="pcList"></div>
+  </div>
+</section>
 
 <div class="planner">
   <div class="planner-left">
@@ -311,6 +368,34 @@
   </div>
 </div>
 
+<!-- Project Chart: create/edit modal -->
+<div class="modal-overlay" id="pcModal" onclick="if(event.target===this)pcClose()">
+  <div class="modal pc-modal">
+    <h3 id="pcModalTitle">새 프로젝트</h3>
+    <label>프로젝트명</label>
+    <input type="text" id="pcName" placeholder="프로젝트 이름..." autocomplete="off">
+    <label>프로젝트 목적</label>
+    <textarea id="pcPurpose" placeholder="이 프로젝트의 목적..."></textarea>
+    <label>세부 태스크 (1~10개)</label>
+    <div id="pcTasks"></div>
+    <button id="pcTaskAddBtn" onclick="pcAddTask()">+ 태스크 추가</button>
+    <label>마감일</label>
+    <div class="pc-due-chips" id="pcDueChips">
+      <button type="button" data-months="1" onclick="pcSetDuePreset(1)">1달</button>
+      <button type="button" data-months="2" onclick="pcSetDuePreset(2)">2달</button>
+      <button type="button" data-months="3" onclick="pcSetDuePreset(3)">3달</button>
+      <button type="button" data-months="6" onclick="pcSetDuePreset(6)">6개월</button>
+      <button type="button" data-months="12" onclick="pcSetDuePreset(12)">1년</button>
+    </div>
+    <input type="date" id="pcDueDate" onchange="pcSyncDueChip()">
+    <div class="modal-actions">
+      <button class="btn-danger" id="pcDeleteBtn" style="display:none;" onclick="pcDelete()">삭제</button>
+      <button class="btn-cancel" onclick="pcClose()">취소</button>
+      <button class="btn-save" onclick="pcSave()">저장</button>
+    </div>
+  </div>
+</div>
+
 <!-- Docs: template picker -->
 <div class="modal-overlay" id="docsPickerModal" onclick="if(event.target===this)docsClosePicker()">
   <div class="modal docs-picker">
@@ -371,6 +456,8 @@ let docList=[], editorState=null, editorDraftTimer=null;
 let dailyJob={items:[],lastResetDate:''};
 let brainDump=[];
 let timeplanByDate={};   // { 'YYYY-MM-DD': [blocks] }
+let projects=[];   // [{id,name,purpose,tasks:[{id,text,done}],startDate,dueDate,createdAt}]
+let pcModalState={editing:null,tasks:[]};
 let currentDate=getPlannerDate();
 let userProfile=null, editingBrainId=null, editingBlockId=null, dragData=null;
 
@@ -591,7 +678,7 @@ function scheduleSave(name,getContent){
 
 async function loadAllFromDrive(){
   // cache→paint already happened in init; this fetches latest from Drive
-  await Promise.all([loadDailyJob(),loadBrainDump(),loadTimeplan(currentDate)]);
+  await Promise.all([loadDailyJob(),loadBrainDump(),loadTimeplan(currentDate),loadProjects()]);
   checkDailyJobReset();
   renderAll();
 }
@@ -621,6 +708,15 @@ async function loadTimeplan(date){
 function saveDailyJob(){cacheSet('dailyJob',dailyJob);scheduleSave('dailyJob.json',()=>dailyJob);}
 function saveBrainDump(){cacheSet('brainDump',brainDump);scheduleSave('brainDump.json',()=>brainDump);}
 function saveTimeplan(date){const d=timeplanByDate[date]||[];cacheSet('tp:'+date,d);scheduleSave('timeplan-'+date+'.json',()=>d);}
+function saveProjects(){cacheSet('projectChart',projects);scheduleSave('projectChart.json',()=>projects);}
+
+async function loadProjects(){
+  if(!isTokenValid())return;
+  const f=await driveFind('projectChart.json');
+  if(!f)return;
+  const d=await driveLoad(f.id);
+  if(Array.isArray(d)){projects=d;cacheSet('projectChart',d);}
+}
 
 // ── Daily Job ──
 function checkDailyJobReset(){
@@ -876,6 +972,180 @@ function blockSave(){
 function blockDelete(){
   timeplanByDate[currentDate]=(timeplanByDate[currentDate]||[]).filter(b=>b.id!==editingBlockId);
   saveTimeplan(currentDate);renderTimePlan();blockClose();
+}
+
+// ── Project Chart ──
+function pcStatus(p){
+  const total=(p.tasks||[]).length;
+  const done=(p.tasks||[]).filter(t=>t.done).length;
+  const pct=total?done/total*100:0;
+  let color='green';
+  if(total && done<total && p.startDate && p.dueDate){
+    const now=Date.now();
+    const start=new Date(p.startDate+'T00:00:00').getTime();
+    const due=new Date(p.dueDate+'T23:59:59').getTime();
+    const span=Math.max(due-start,1);
+    let timePct=(now-start)/span*100;
+    if(timePct<0)timePct=0; if(timePct>100)timePct=100;
+    const delay=timePct-pct;
+    if(delay>=40)color='red';
+    else if(delay>=20)color='yellow';
+  }
+  return {pct,color};
+}
+function pcDDay(dueDate){
+  if(!dueDate)return '';
+  const d=new Date(dueDate+'T00:00:00'); d.setHours(0,0,0,0);
+  const n=new Date(); n.setHours(0,0,0,0);
+  const days=Math.round((d-n)/86400000);
+  if(days>0)return `D-${days}`;
+  if(days===0)return 'D-DAY';
+  return `D+${-days}`;
+}
+function pcFmtPct(v){return (v%1===0?v.toFixed(0):v.toFixed(1))+'%';}
+
+function renderProjects(){
+  const list=document.getElementById('pcList');
+  if(!list)return;
+  if(!projects.length){
+    list.innerHTML='<div class="pc-empty">아직 등록된 프로젝트가 없습니다. 우측 상단 + 버튼으로 추가하세요.</div>';
+    return;
+  }
+  list.innerHTML=projects.map(p=>{
+    const s=pcStatus(p);
+    const pctTxt=pcFmtPct(s.pct);
+    const dday=pcDDay(p.dueDate);
+    return `<div class="pc-row" onclick="pcOpenEdit('${escapeHtml(p.id)}')" title="${escapeHtml(p.name)} (${pctTxt} / ${dday})">`
+      +`<div class="pc-name-col">`
+        +`<div class="pc-name">${escapeHtml(p.name)}</div>`
+        +`<div class="pc-name-sub ${s.color}">${escapeHtml(dday)}</div>`
+      +`</div>`
+      +`<div class="pc-bar-track"><div class="pc-bar-fill ${s.color}" style="width:${s.pct}%"></div></div>`
+      +`<div class="pc-pct ${s.color}">${pctTxt}</div>`
+    +`</div>`;
+  }).join('');
+}
+
+function isoDate(d){
+  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function addMonths(date,n){const d=new Date(date.getTime());d.setMonth(d.getMonth()+n);return d;}
+
+function pcRenderModalTasks(){
+  const isEdit=!!pcModalState.editing;
+  const wrap=document.getElementById('pcTasks');
+  wrap.innerHTML=pcModalState.tasks.map((t,i)=>(
+    `<div class="pc-task-row">`
+    +(isEdit?`<input type="checkbox" class="pc-task-check" data-i="${i}"${t.done?' checked':''}>`:'')
+    +`<input type="text" class="pc-task-text${isEdit&&t.done?' done':''}" data-i="${i}" value="${escapeHtml(t.text)}" placeholder="태스크 ${i+1}">`
+    +`<button type="button" class="pc-task-del" data-i="${i}" title="제거">×</button>`
+    +`</div>`
+  )).join('');
+  document.getElementById('pcTaskAddBtn').style.display=pcModalState.tasks.length>=10?'none':'block';
+  wrap.querySelectorAll('.pc-task-text').forEach(el=>{
+    el.oninput=e=>{pcModalState.tasks[+e.target.dataset.i].text=e.target.value;};
+    el.onkeydown=e=>{
+      if(e.key!=='Enter'||e.isComposing||e.shiftKey)return;
+      e.preventDefault();
+      const i=+e.target.dataset.i;
+      const inps=wrap.querySelectorAll('.pc-task-text');
+      if(i<inps.length-1){inps[i+1].focus();return;}
+      if(e.target.value.trim() && pcModalState.tasks.length<10)pcAddTask();
+    };
+  });
+  wrap.querySelectorAll('.pc-task-check').forEach(el=>{
+    el.onchange=e=>{
+      const i=+e.target.dataset.i;
+      pcModalState.tasks[i].done=e.target.checked;
+      const txt=wrap.querySelector(`.pc-task-text[data-i="${i}"]`);
+      if(txt)txt.classList.toggle('done',e.target.checked);
+    };
+  });
+  wrap.querySelectorAll('.pc-task-del').forEach(el=>{
+    el.onclick=e=>{
+      const i=+e.currentTarget.dataset.i;
+      if(pcModalState.tasks.length<=1){alert('최소 1개의 태스크가 필요합니다.');return;}
+      pcModalState.tasks.splice(i,1);
+      pcRenderModalTasks();
+    };
+  });
+}
+
+function pcOpenAdd(){
+  pcModalState={editing:null,tasks:[{id:uid(),text:'',done:false}]};
+  document.getElementById('pcModalTitle').textContent='새 프로젝트';
+  document.getElementById('pcDeleteBtn').style.display='none';
+  document.getElementById('pcName').value='';
+  document.getElementById('pcPurpose').value='';
+  document.getElementById('pcDueDate').value=isoDate(addMonths(new Date(),1));
+  pcRenderModalTasks();
+  pcSyncDueChip();
+  document.getElementById('pcModal').classList.add('active');
+  setTimeout(()=>document.getElementById('pcName').focus(),0);
+}
+function pcOpenEdit(id){
+  const p=projects.find(x=>x.id===id);
+  if(!p)return;
+  pcModalState={editing:id,tasks:(p.tasks||[]).map(t=>({...t}))};
+  document.getElementById('pcModalTitle').textContent='프로젝트 편집';
+  document.getElementById('pcDeleteBtn').style.display='inline-block';
+  document.getElementById('pcName').value=p.name||'';
+  document.getElementById('pcPurpose').value=p.purpose||'';
+  document.getElementById('pcDueDate').value=p.dueDate||'';
+  pcRenderModalTasks();
+  pcSyncDueChip();
+  document.getElementById('pcModal').classList.add('active');
+}
+function pcClose(){document.getElementById('pcModal').classList.remove('active');}
+function pcAddTask(){
+  if(pcModalState.tasks.length>=10){alert('최대 10개까지만 등록할 수 있습니다.');return;}
+  pcModalState.tasks.push({id:uid(),text:'',done:false});
+  pcRenderModalTasks();
+  setTimeout(()=>{
+    const inps=document.querySelectorAll('#pcTasks .pc-task-text');
+    if(inps.length)inps[inps.length-1].focus();
+  },0);
+}
+function pcSetDuePreset(months){
+  document.getElementById('pcDueDate').value=isoDate(addMonths(new Date(),months));
+  pcSyncDueChip();
+}
+function pcSyncDueChip(){
+  const dv=document.getElementById('pcDueDate').value;
+  document.querySelectorAll('#pcDueChips button').forEach(b=>{
+    const m=+b.dataset.months;
+    b.classList.toggle('active', dv===isoDate(addMonths(new Date(),m)));
+  });
+}
+function pcSave(){
+  const name=document.getElementById('pcName').value.trim();
+  const purpose=document.getElementById('pcPurpose').value.trim();
+  const dueDate=document.getElementById('pcDueDate').value;
+  if(!name){alert('프로젝트명을 입력하세요.');return;}
+  const tasks=pcModalState.tasks.map(t=>({...t,text:t.text.trim()})).filter(t=>t.text);
+  if(!tasks.length){alert('세부 태스크를 1개 이상 입력하세요.');return;}
+  if(tasks.length>10){alert('최대 10개까지만 등록할 수 있습니다.');return;}
+  if(!dueDate){alert('마감일을 선택하세요.');return;}
+  if(pcModalState.editing){
+    const p=projects.find(x=>x.id===pcModalState.editing);
+    if(!p)return;
+    p.name=name; p.purpose=purpose; p.dueDate=dueDate; p.tasks=tasks;
+  }else{
+    projects.push({
+      id:uid(),name,purpose,tasks,
+      startDate:isoDate(new Date()),
+      dueDate,
+      createdAt:new Date().toISOString()
+    });
+  }
+  saveProjects(); renderProjects(); pcClose();
+}
+function pcDelete(){
+  if(!pcModalState.editing)return;
+  if(!confirm('이 프로젝트를 삭제할까요?'))return;
+  projects=projects.filter(p=>p.id!==pcModalState.editing);
+  saveProjects(); renderProjects(); pcClose();
 }
 
 // ── Docs (templates + project documents) ──
@@ -1190,7 +1460,7 @@ function downloadBlob(filename,content,mime){
 }
 
 // ── Master render ──
-function renderAll(){renderAuth();renderBookmarks();renderShortcuts();renderDailyJob();renderBrainDump();renderTimePlan();}
+function renderAll(){renderAuth();renderBookmarks();renderShortcuts();renderProjects();renderDailyJob();renderBrainDump();renderTimePlan();}
 
 // ── Init ──
 (async()=>{
@@ -1198,16 +1468,18 @@ function renderAll(){renderAuth();renderBookmarks();renderShortcuts();renderDail
   const cDJ=cacheGet('dailyJob');if(cDJ)dailyJob=cDJ;
   const cBD=cacheGet('brainDump');if(cBD)brainDump=cBD;
   const cTP=cacheGet('tp:'+currentDate);if(cTP)timeplanByDate[currentDate]=cTP;
+  const cPC=cacheGet('projectChart');if(Array.isArray(cPC))projects=cPC;
   checkDailyJobReset();
   await Promise.all([fetchShortcuts(),fetchBookmarks(),fetchTemplates()]);
   renderAll();
 })();
 
-// ── Periodic Daily Job reset check ──
+// ── Periodic Daily Job reset + project color refresh ──
 setInterval(()=>{
   if(dailyJob.lastResetDate!==getPlannerDate()){
     checkDailyJobReset();renderDailyJob();renderTimePlan();
   }
+  renderProjects();
 },60000);
 </script>
 </body>
